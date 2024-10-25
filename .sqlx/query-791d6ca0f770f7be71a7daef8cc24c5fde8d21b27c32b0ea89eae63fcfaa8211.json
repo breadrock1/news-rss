@@ -1,0 +1,19 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n                INSERT INTO news(\n                    id,\n                    message_url,\n                    datetime,\n                    source,\n                    photo_path,\n                    text\n                )\n                VALUES ( $1, $2, $3, $4, $5, $6 )\n            ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Varchar",
+        "Text",
+        "Timestamp",
+        "Text",
+        "Text",
+        "Text"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "791d6ca0f770f7be71a7daef8cc24c5fde8d21b27c32b0ea89eae63fcfaa8211"
+}

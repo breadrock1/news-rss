@@ -1,0 +1,30 @@
+version: '3.9'
+
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    restart: unless-stopped
+    volumes:
+      - './rabbitmq-data:/var/lib/rabbitmq'
+    ports:
+      - '5552:5552'
+      - '5672:5672'
+      - '15672:15672'
+
+  pgsql:
+    image: postgres:13.4
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ai-crawler
+      POSTGRES_PORT: 5432
+      POSTGRES_HOST_AUTH_METHOD: trust
+    ports:
+      - '5432:5432'
+    networks:
+      - instruments-compose_net
+
+networks:
+  instruments-compose_net:
+    external: true

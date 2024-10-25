@@ -1,0 +1,46 @@
+[logger]
+level = "debug"
+
+[cache.local]
+expired = 10368000
+
+[cache.redis]
+address = "redis://localhost:6379"
+username = "redis"
+password = "redis"
+stream_name = "news-rss-stream"
+capacity_gb = 1
+
+[publish.rmq]
+address = "amqp://localhost:5672"
+username = "rmq"
+password = "rmq"
+stream_name = "news-rss-stream"
+exchange = "news-rss-exchange"
+routing_key = "news-rss-routing"
+capacity_gb = 1
+
+[publish.pgsql]
+address = "localhost:5432"
+database = "ai-crawler"
+username = "postgres"
+password = "postgres"
+max_pool_size = 10
+
+[crawler.llm]
+api_key = "sk-no-key-required"
+base_url = "http://localhost:8081/v1"
+
+[topics.rss]
+max_retries = 3
+timeout = 100
+interval_secs = 3600
+target_url = "https://feeds.feedburner.com/ndtvnews-world-news"
+
+# Available rss news sources:
+#target_url = "https://feeds.skynews.com/feeds/rss/world.xml"
+#target_url = "https://media.rss.com/ukrainewatch/feed.xml"
+#target_url = "https://feeds.feedburner.com/pri/theworld"
+#target_url = "https://www.mnnonline.org/rss/countries/ukr.xml"
+#target_url = "https://www.wdiy.org/podcast/the-jennings-report/rss.xml"
+#target_url = "http://feeds.feedburner.com/NewsHourHeadlinesPodcast"
