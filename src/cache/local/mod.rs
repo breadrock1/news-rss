@@ -41,9 +41,9 @@ impl ServiceConnect for LocalCache {
 
 #[async_trait::async_trait]
 impl CacheService for LocalCache {
-    async fn set(&self, key: String, value: PublishNews) {
+    async fn set(&self, key: &str, value: &PublishNews) {
         let cache = &self.client;
-        cache.insert(key, value).await;
+        cache.insert(key.to_string(), value.to_owned()).await;
     }
 
     async fn contains(&self, key: &str) -> bool {
