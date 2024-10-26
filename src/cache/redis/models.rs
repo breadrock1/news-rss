@@ -1,8 +1,8 @@
 use crate::publish::models::PublishNews;
 
-use redis::{RedisError, RedisResult};
 use redis::RedisWrite;
 use redis::Value;
+use redis::{RedisError, RedisResult};
 use serde::de::Error;
 
 impl redis::ToRedisArgs for PublishNews {
