@@ -1,4 +1,3 @@
-use anyhow::Error;
 use news_rss::cache::local::LocalCache;
 use news_rss::config::ServiceConfig;
 use news_rss::crawler::native::NativeCrawler;
@@ -10,20 +9,21 @@ use std::sync::Arc;
 use tokio::task::JoinError;
 
 #[tokio::main]
-async fn main() -> Result<(), Error> {
+async fn main() -> Result<(), anyhow::Error> {
     let config = ServiceConfig::new()?;
     logger::init_logger(config.logger())?;
 
-    let rmq_config = config.publish().rmq();
-    let rmq = RabbitPublisher::connect(rmq_config).await?;
-    let rmq = Arc::new(rmq);
+    let publish = build_rmq_publish(&config).await?;
+    #[cfg(feature = "publish-offline")]
+    let publish = tests_helper::build_pgsql_publish(&config).await?;
 
-    let cache_config = config.cache().local();
-    let cache = LocalCache::connect(cache_config).await?;
-    let cache = Arc::new(cache);
+    let cache = build_local_cache(&config).await?;
+    #[cfg(feature = "cache-redis")]
+    let cache = tests_helper::build_redis_cache(&config).await?;
 
-    let crawler = NativeCrawler::new();
-    let crawler = Arc::new(crawler);
+    let crawler = build_native_crawler(&config).await?;
+    #[cfg(feature = "crawler-llm")]
+    let crawler = tests_helper::build_llm_crawler(&config).await?;
 
     let topics_config = config.topics();
     let rss_config = topics_config.rss();
@@ -34,7 +34,7 @@ async fn main() -> Result<(), Error> {
         .filter_map(|it| {
             let mut rss_config = topics_config.rss();
             rss_config.set_target_url(it.to_string());
-            RssFeeds::new(&rss_config, rmq.clone(), cache.clone(), crawler.clone()).ok()
+            RssFeeds::new(&rss_config, publish.clone(), cache.clone(), crawler.clone()).ok()
         })
         .collect::<Vec<RssFeeds<_, _, _>>>();
 
@@ -51,7 +51,7 @@ async fn main() -> Result<(), Error> {
     Ok(())
 }
 
-fn extract_worker_result(result: Result<Result<(), Error>, JoinError>) {
+fn extract_worker_result(result: Result<Result<(), anyhow::Error>, JoinError>) {
     let join_result = match result {
         Ok(res) => res,
         Err(err) => {
@@ -66,4 +66,54 @@ fn extract_worker_result(result: Result<Result<(), Error>, JoinError>) {
     }
 
     tracing::info!("worker has been terminated successful");
+}
+
+pub async fn build_local_cache(config: &ServiceConfig) -> Result<Arc<LocalCache>, anyhow::Error> {
+    let cache_config = config.cache().local();
+    let cache = LocalCache::connect(cache_config).await?;
+    let cache = Arc::new(cache);
+    Ok(cache)
+}
+
+#[cfg(feature = "cache-redis")]
+pub async fn build_redis_cache(config: &ServiceConfig) -> Result<Arc<RedisClient>, anyhow::Error> {
+    let redis_config = config.cache().redis();
+    let cache = RedisClient::connect(redis_config).await?;
+    let cache = Arc::new(cache);
+    Ok(cache)
+}
+
+pub async fn build_rmq_publish(
+    config: &ServiceConfig,
+) -> Result<Arc<RabbitPublisher>, anyhow::Error> {
+    let rmq_config = config.publish().rmq();
+    let rmq = RabbitPublisher::connect(rmq_config).await?;
+    let rmq = Arc::new(rmq);
+    Ok(rmq)
+}
+
+#[cfg(feature = "publish-offline")]
+pub async fn build_pgsql_publish(
+    config: &ServiceConfig,
+) -> Result<Arc<PgsqlPublisher>, anyhow::Error> {
+    let pgsql_config = config.publish().pgsql();
+    let pgsql = PgsqlPublisher::connect(pgsql_config).await?;
+    let pgsql = Arc::new(pgsql);
+    Ok(pgsql)
+}
+
+pub async fn build_native_crawler(
+    _config: &ServiceConfig,
+) -> Result<Arc<NativeCrawler>, anyhow::Error> {
+    let crawler = NativeCrawler::new();
+    let crawler = Arc::new(crawler);
+    Ok(crawler)
+}
+
+#[cfg(feature = "crawler-llm")]
+pub async fn build_llm_crawler(config: &ServiceConfig) -> Result<Arc<LlmCrawler>, anyhow::Error> {
+    let crawler_config = config.crawler().llm();
+    let crawler = LlmCrawler::connect(crawler_config).await?;
+    let crawler = Arc::new(crawler);
+    Ok(crawler)
 }

@@ -1,6 +1,18 @@
 version: '3.9'
 
 services:
+  redis:
+    image: redis:latest
+    restart: on-failure
+    environment:
+      REDIS_USER: ${REDIS_USERNAME}
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+      REDIS_USER_PASSWORD: ${REDIS_USER_PASSWORD}
+    ports:
+      - '6379:6379'
+    volumes:
+      - './redis-data:/data/cacher'
+
   rabbitmq:
     image: rabbitmq:3-management
     restart: unless-stopped
@@ -28,6 +40,7 @@ services:
     restart: unless-stopped
     links:
       - rabbitmq
+      - redis
       - pgsql
     ports:
       - '2895:2895'
