@@ -2,14 +2,12 @@
 level = "info"
 
 [cache.local]
-expired = 10368000
+expired_secs = 10368000
 
 [cache.redis]
 address = "redis://redis:6379"
 username = "redis"
 password = "redis"
-stream_name = "news-rss-stream"
-capacity_gb = 1
 
 [publish.rmq]
 address = "amqp://rabbitmq:5672"
