@@ -1,9 +1,12 @@
+mod mocks;
 mod tests_helper;
 
+use mocks::mock_rmq_publish::MockRabbitPublisher;
 use news_rss::config::ServiceConfig;
 use news_rss::feeds::rss_feeds::RssFeeds;
 use news_rss::feeds::FetchTopic;
 use news_rss::{logger, ServiceConnect};
+use std::sync::Arc;
 use std::time::Duration;
 
 const TEST_TIME_EXECUTION: u64 = 5;
@@ -13,7 +16,9 @@ async fn test_rss_feeds() -> Result<(), anyhow::Error> {
     let config = ServiceConfig::new()?;
     logger::init_logger(config.logger())?;
 
-    let publish = tests_helper::build_rmq_publish(&config).await?;
+    let publish = MockRabbitPublisher::connect(config.publish().rmq()).await?;
+    let publish = Arc::new(publish);
+
     #[cfg(feature = "publish-offline")]
     let publish = tests_helper::build_pgsql_publish(&config).await?;
 
@@ -43,7 +48,7 @@ async fn test_rss_feeds() -> Result<(), anyhow::Error> {
         .map(|it| tokio::spawn(async move { it.launch_fetching().await }))
         .collect::<Vec<_>>();
 
-    let _ = tests_helper::rabbit_consumer(config.publish().rmq()).await?;
+    // let _ = tests_helper::rabbit_consumer(config.publish().rmq()).await?;
 
     tokio::time::sleep(Duration::from_secs(TEST_TIME_EXECUTION)).await;
 
