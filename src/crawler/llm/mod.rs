@@ -8,7 +8,7 @@ use crate::crawler::llm::prompt::*;
 use crate::crawler::CrawlerService;
 use crate::ServiceConnect;
 
-use getset::Getters;
+use getset::{CopyGetters, Getters};
 use openai_dive::v1::api::Client;
 use openai_dive::v1::resources::chat::*;
 use regex::Regex;
@@ -67,12 +67,14 @@ impl CrawlerService for LlmCrawler {
     }
 }
 
-#[derive(Debug, Deserialize, Getters)]
+#[derive(Debug, Deserialize, Getters, CopyGetters)]
+#[getset(get = "pub")]
 struct SemanticBlock {
+    #[allow(dead_code)]
+    #[getset(skip)]
+    #[getset(get_copy = "pub")]
     index: i32,
-    #[getset(get = "pub")]
     tags: Vec<String>,
-    #[getset(get = "pub")]
     content: Vec<String>,
 }
 

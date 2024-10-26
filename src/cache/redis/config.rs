@@ -7,10 +7,6 @@ pub struct RedisConfig {
     address: String,
     username: String,
     password: String,
-    stream_name: String,
-    #[getset(skip)]
-    #[getset(get_copy = "pub")]
-    capacity_gb: u64,
     #[getset(skip)]
     #[getset(get_copy = "pub")]
     expired_secs: u64,

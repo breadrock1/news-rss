@@ -1,3 +1,12 @@
+#[cfg(feature = "cache-redis")]
+use news_rss::cache::redis::RedisClient;
+
+#[cfg(feature = "crawler-llm")]
+use news_rss::crawler::llm::LlmCrawler;
+
+#[cfg(feature = "publish-offline")]
+use news_rss::publish::pgsql::PgsqlPublisher;
+
 use news_rss::cache::local::LocalCache;
 use news_rss::config::ServiceConfig;
 use news_rss::crawler::native::NativeCrawler;
@@ -13,17 +22,20 @@ async fn main() -> Result<(), anyhow::Error> {
     let config = ServiceConfig::new()?;
     logger::init_logger(config.logger())?;
 
+    #[allow(unused_variables)]
     let publish = build_rmq_publish(&config).await?;
     #[cfg(feature = "publish-offline")]
-    let publish = tests_helper::build_pgsql_publish(&config).await?;
+    let publish = build_pgsql_publish(&config).await?;
 
+    #[allow(unused_variables)]
     let cache = build_local_cache(&config).await?;
     #[cfg(feature = "cache-redis")]
-    let cache = tests_helper::build_redis_cache(&config).await?;
+    let cache = build_redis_cache(&config).await?;
 
+    #[allow(unused_variables)]
     let crawler = build_native_crawler(&config).await?;
     #[cfg(feature = "crawler-llm")]
-    let crawler = tests_helper::build_llm_crawler(&config).await?;
+    let crawler = build_llm_crawler(&config).await?;
 
     let topics_config = config.topics();
     let rss_config = topics_config.rss();

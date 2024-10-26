@@ -29,7 +29,7 @@ impl ServiceConnect for LocalCache {
 
     async fn connect(config: &Self::Config) -> Result<Self::Client, Self::Error> {
         let cacher = Cache::builder()
-            .time_to_live(Duration::from_secs(config.expired()))
+            .time_to_live(Duration::from_secs(config.expired_secs()))
             .build();
 
         Ok(LocalCache {
