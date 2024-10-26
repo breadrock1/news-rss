@@ -1,6 +1,6 @@
 use news_rss::publish::models::PublishNews;
-use news_rss::publish::Publisher;
 use news_rss::publish::rabbit::config::RabbitConfig;
+use news_rss::publish::Publisher;
 use news_rss::ServiceConnect;
 
 pub struct MockRabbitPublisher {}
@@ -12,7 +12,7 @@ impl ServiceConnect for MockRabbitPublisher {
     type Client = Self;
 
     async fn connect(_config: &Self::Config) -> Result<Self::Client, Self::Error> {
-        Ok(MockRabbitPublisher{})
+        Ok(MockRabbitPublisher {})
     }
 }
 
