@@ -150,7 +150,7 @@ where
             }
 
             tracing::info!("{topic}: article {art_id} published successful");
-            self.cacher.set(art_id.to_owned(), art).await;
+            self.cacher.set(art_id, &art).await;
         }
 
         Ok(())

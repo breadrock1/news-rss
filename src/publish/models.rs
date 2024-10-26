@@ -1,9 +1,9 @@
 use chrono::NaiveDateTime;
 use derive_builder::Builder;
 use getset::Getters;
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
-#[derive(Builder, Clone, Debug, Getters, Serialize)]
+#[derive(Builder, Clone, Debug, Getters, Deserialize, Serialize)]
 #[getset(get = "pub")]
 pub struct PublishNews {
     id: String,
