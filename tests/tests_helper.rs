@@ -21,8 +21,12 @@ use news_rss::publish::rabbit::RabbitPublisher;
 use news_rss::ServiceConnect;
 use std::sync::Arc;
 
+#[allow(dead_code)]
 const TEST_AMQP_CONSUMER_TAG: &str = "test-news-rss-consumer";
 
+#[allow(dead_code)]
+#[allow(unused_assignments)]
+#[allow(unused_variables)]
 pub async fn rabbit_consumer(config: &RabbitConfig) -> Result<(), anyhow::Error> {
     let conn_props = ConnectionProperties::default();
     let connection = Connection::connect(config.address(), conn_props).await?;
@@ -112,6 +116,7 @@ pub async fn build_redis_cache(config: &ServiceConfig) -> Result<Arc<RedisClient
     Ok(cache)
 }
 
+#[allow(dead_code)]
 pub async fn build_rmq_publish(
     config: &ServiceConfig,
 ) -> Result<Arc<RabbitPublisher>, anyhow::Error> {
