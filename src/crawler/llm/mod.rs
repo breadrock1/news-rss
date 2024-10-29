@@ -8,15 +8,12 @@ use crate::crawler::llm::prompt::*;
 use crate::crawler::CrawlerService;
 use crate::ServiceConnect;
 
-use getset::{CopyGetters, Getters};
 use openai_dive::v1::api::Client;
 use openai_dive::v1::resources::chat::*;
 use regex::Regex;
-use serde::Deserialize;
 use std::sync::Arc;
 
-const REMOVE_BLOCKS_REGEX: &str = r#"<[^>]*>"#;
-const REGEX_MATCH_SPLIT_AMOUNT: usize = 4;
+const FIND_LLM_BLOCKS_REGEX: &str = r#"<blocks>[\w\W]+?<\/blocks>"#;
 
 pub struct LlmCrawler {
     client: Arc<Client>,
@@ -41,7 +38,7 @@ impl ServiceConnect for LlmCrawler {
 impl CrawlerService for LlmCrawler {
     type Error = anyhow::Error;
 
-    async fn scrape_text(&self, text_data: &str) -> Result<String, Self::Error> {
+    async fn scrape(&self, text_data: &str) -> Result<String, Self::Error> {
         let system_prompt_msg = Self::create_system_prompt();
         let user_query_msg = Self::create_user_query(text_data);
         let completion = ChatCompletionParametersBuilder::default()
@@ -62,20 +59,19 @@ impl CrawlerService for LlmCrawler {
             return Err(err);
         };
 
-        let content_data = content_data.to_string();
-        Self::extract_json_data(&content_data)
+        Self::extract_semantic_blocks(&content_data.to_string())
     }
-}
 
-#[derive(Debug, Deserialize, Getters, CopyGetters)]
-#[getset(get = "pub")]
-struct SemanticBlock {
-    #[allow(dead_code)]
-    #[getset(skip)]
-    #[getset(get_copy = "pub")]
-    index: i32,
-    tags: Vec<String>,
-    content: Vec<String>,
+    async fn scrape_by_url(&self, url: &str) -> Result<String, Self::Error> {
+        let response = reqwest::Client::new()
+            .get(url)
+            .send()
+            .await?
+            .error_for_status()?;
+
+        let html_str = response.text().await?;
+        self.scrape(&html_str).await
+    }
 }
 
 impl LlmCrawler {
@@ -86,7 +82,7 @@ impl LlmCrawler {
     fn create_system_prompt() -> ChatMessage {
         ChatMessage::System {
             name: Some(SYSTEM_PROMPT_NAME.to_string()),
-            content: ChatMessageContent::Text(SCRAPE_HTML_SYSTEM_PROMPT.to_string()),
+            content: ChatMessageContent::Text(SCRAPE_HTML_SYSTEM_PROMPT_AS_TEXT.to_string()),
         }
     }
 
