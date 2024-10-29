@@ -22,10 +22,12 @@ async fn test_rss_feeds() -> Result<(), anyhow::Error> {
     #[cfg(feature = "publish-offline")]
     let publish = tests_helper::build_pgsql_publish(&config).await?;
 
+    #[allow(unused_variables)]
     let cache = tests_helper::build_local_cache(&config).await?;
     #[cfg(feature = "cache-redis")]
     let cache = tests_helper::build_redis_cache(&config).await?;
 
+    #[allow(unused_variables)]
     let crawler = tests_helper::build_native_crawler(&config).await?;
     #[cfg(feature = "crawler-llm")]
     let crawler = tests_helper::build_llm_crawler(&config).await?;
