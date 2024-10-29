@@ -20,24 +20,20 @@ use reqwest_retry::RetryTransientMiddleware;
 use std::str::FromStr;
 use std::sync::Arc;
 use std::time::Duration;
+use regex::Regex;
 use tokio::time;
 
 #[derive(Getters, CopyGetters)]
+#[getset(get = "pub")]
 pub struct RssFeeds<P, C, S>
 where
     P: Publisher,
     C: CacheService,
     S: CrawlerService,
 {
-    #[getset(get = "pub")]
     config: RssConfig,
-    #[getset(get_copy = "pub")]
-    last_scan: NaiveDateTime,
-    #[getset(get = "pub")]
     cacher: Arc<C>,
-    #[getset(get = "pub")]
     crawler: Arc<S>,
-    #[getset(get = "pub")]
     publisher: Arc<P>,
 }
 
@@ -108,10 +104,8 @@ where
         cache: Arc<C>,
         crawler: Arc<S>,
     ) -> Result<Self, RssError> {
-        let last_date_scan: NaiveDateTime = NaiveDateTime::default();
         Ok(RssFeeds {
             config: config.to_owned(),
-            last_scan: last_date_scan,
             publisher: publish,
             cacher: cache,
             crawler,
@@ -160,24 +154,31 @@ where
         let guid = item.guid().ok_or(anyhow::Error::msg("empty guid"))?;
         let title = item.title().ok_or(anyhow::Error::msg("empty title"))?;
         let link = item.link().ok_or(anyhow::Error::msg("empty link"))?;
-        let description = item
-            .description()
-            .ok_or(anyhow::Error::msg("empty description"))?;
-
-        let content = item
-            .content()
-            .map(|it| it.to_string())
-            .unwrap_or_else(|| description.to_string());
-
-        let content = self
-            .crawler()
-            .scrape_text(&content)
-            .await
-            .unwrap_or(content);
 
         let source = Url::parse(link)
             .map(|it| it.domain().map(|t| t.to_string()))
             .unwrap_or(Some(link.to_string()));
+
+        let description = item
+            .description()
+            .ok_or(anyhow::Error::msg("empty description"))?;
+
+        let content = match item.content() {
+            Some(data) => self.clear_html_tags(data)?,
+            None => {
+                #[allow(unused_variables)]
+                let data = description;
+
+                #[cfg(feature = "crawler-llm")]
+                let data = &source.clone().unwrap_or(link.to_string());
+
+                self
+                    .crawler()
+                    .scrape(data)
+                    .await
+                    .map_err(|err| anyhow::Error::msg(err.to_string()))?
+            }
+        };
 
         let pub_date = item
             .pub_date()
@@ -201,5 +202,11 @@ where
             .build()?;
 
         Ok(model)
+    }
+
+    fn clear_html_tags(&self, content: &str) -> Result<String, regex::Error> {
+        let regex = Regex::new(r#"<[^>]*>"#)?;
+        let result_text = regex.replace_all(content, "").to_string();
+        Ok(result_text)
     }
 }
