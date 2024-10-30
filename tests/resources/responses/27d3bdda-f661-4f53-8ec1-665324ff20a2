@@ -1,0 +1,185 @@
+Here is the XML document that breaks down the HTML content into semantically relevant blocks:
+
+```xml
+<blocks>
+  <block>
+    <index>0</index>
+    <tags>
+      <tag>header</tag>
+    </tags>
+    <contents>
+      <content>"NDTV "</content>
+      <content>"World "</content>
+      <content>"Profit "</content>
+      <content>"हिंदी "</content>
+      <content>"Sports "</content>
+      <content>"MOVIES "</content>
+      <content>"FOOD "</content>
+      <content>"LIFESTYLE "</content>
+      <content>"HEALTH "</content>
+      <content>"SWASTH "</content>
+      <content>"TECH "</content>
+      <content>"Influencers "</content>
+      <content>"Games "</content>
+      <content>"Big Bonus "</content>
+      <content>"SHOPPING "</content>
+      <content>"APPS "</content>
+      <content>"Advertisement "</content>
+    </contents>
+  </block>
+  <block>
+    <index>1</index>
+    <tags>
+      <tag>menu</tag>
+    </tags>
+    <contents>
+      <content>"[ US Election ][18]"
+      <content>"[ US ][19]"
+      <content>"[ UK ][20]"
+      <content>"[ Middle East ][21]"
+      <content>"[ India Global ][22]"
+      <content>"[ Asia ][23]"
+      <content>"[ Europe ][24]"
+      <content>"[ Australia ][25]"
+      <content>"[ Americas ][26]"
+      <content>"[ Africa ][27]"
+      <content>"[ Videos ][28]"
+      <content>"[ Bollywood][29]"
+      <content>"[World News][30]"
+      <content>"[Diaspora News][31]"
+      <content>"[Science &amp; Knowledge][32]"
+      <content>"[Sports News &amp; Updates][33]"
+      <content>"[Web Stories][34]"
+      <content>"[Featured Stories][35]"
+      <content>"[Offbeat Stories][36]"
+      <content>"[Opinion][37]"
+      <content>"[People][38]"
+      <content>"[Live TV - India][39]"
+      <content>"[Photos][40]"
+      <content>"[Study Abroad][41]"
+      <content>"[Student Reporter][42]"
+    </contents>
+  </block>
+  <block>
+    <index>2</index>
+    <tags>
+      <tag>latest news</tag>
+    </tags>
+    <contents>
+      <content>"Mercedes-AMG C 63 S E Performance To Be Launched On 12 November"
+      <content>"Opinion | Endorsement Sans Election: How Indira Gandhi's Death Changed Everything"
+      <content>"Copyist", "Cocktail Ideology": DMK, AIADMK Mock Actor-Politician Vijay's Party"
+      <content>"Chinese Woman Scams Victims Of Rs 1.77 Crore With Fake Airline Jobs, Uses Plastic Surgery to Avoid Arrest"
+      <content>"Mpox: Recent Cases, Signs &amp; What To Do If You're At Risk"
+    </contents>
+  </block>
+  <block>
+    <index>3</index>
+    <tags>
+      <tag>trending</tag>
+    </tags>
+    <contents>
+      <content>"World News"
+      <content>"PNR Status"
+      <content>"Education News"
+      <content>"Business News"
+      <content>"Sports News"
+      <content>"MP Chhattisgarh News"
+      <content>"NDTV Profit"
+      <content>"Marathi News"
+      <content>"Telangana Murder Case"
+      <content>"PM Modi in Gujarat"
+      <content>"Tirupati's ISKCON Temple"
+    </contents>
+  </block>
+  <block>
+    <index>4</index>
+    <tags>
+      <tag>article</tag>
+    </tags>
+    <contents>
+      <content>"The Secret Train Evacuating Wounded Ukrainian Soldiers"
+      <content>"Nearly three years after Russian forces invaded Ukraine, many medical facilities in war-battered eastern Ukraine have been damaged or destroyed."
+      <content>"Agence France-Presse"
+      <content>"World News"
+      <content>"Oct 28, 2024 13:18 pm IST"
+      <content>"Published On Oct 28, 2024 13:18 pm IST"
+      <content>"Last Updated On Oct 28, 2024 13:18 pm IST"
+      <content>"Read Time: 4 mins"
+      <content>"Share"
+      <content>"Twitter"
+      <content>"WhatsApp"
+      <content>"Facebook"
+      <content>"Reddit"
+      <content>"Email "
+    </contents>
+  </block>
+  <block>
+    <index>5</index>
+    <tags>
+      <tag>article content</tag>
+    </tags>
+    <contents>
+      <content>"It looks like an ordinary train waiting to depart an ordinary station, but through its fogged windows, a Ukrainian serviceman with face injuries lies stretched out on a gurney."
+      <content>"All of the other blue-and-yellow carriages of this train operated by the military are carrying wounded soldiers to hospitals away from the precarious front line."
+      <content>"For Oleksandr, the army doctor overseeing the evacuation, there are clear benefits to rail: many people can be moved at once and it is safer than transporting wounded soldiers by helicopter, given Russian superiority in Ukraine's airspace."
+      <content>"But there are risks too."
+      <content>"Our adversary in the war does not distinguish between what's medical and military, so we take certain security measures," the 46-year-old said."
+      <content>"Everything on the move'"
+      <content>"Ambulances arrived at the station carrying dozens of wounded troops who were then hauled onto the train on stretchers and settled on beds with floral-patterned sheets."
+      <content>"Ukrainian flags and hand-drawn pictures by children annotated with patriotic messages lined the walls inside the train."
+      <content>"The carriages resemble a hospital until the train rolls away from the platform and gently rocks patients and staff -- and everything else inside -- as it crawls farther from the front."
+      <content>"Worried about others'"
+      <content>"Most of those wounded were struck in artillery or drone attacks, staff explained, and many have had arms or legs amputated or were unconscious."
+    </contents>
+  </block>
+  <block>
+    <index>6</index>
+    <tags>
+      <tag>related news</tag>
+    </tags>
+    <contents>
+      <content>"PM Modi Can Influence End Of Ukraine War: Volodymyr Zelenskyy"
+      <content>"Wiped Off The Face Of The Earth": How Russia Erased A Ukrainian City"
+      <content>"Why Do We Fight Wars? NSA Ajit Doval Explains Amid Russia-Ukraine War"
+    </contents>
+  </block>
+  <block>
+    <index>7</index>
+    <tags>
+      <tag>trending news</tag>
+    </tags>
+    <contents>
+      <content>"Days Before Retirement, Chief Justice Speaks On PM's Ganesh Puja Visit Row"
+      <content>"Spiritual Preacher Faces Backlash For Flaunting Luxury Dior Bag Worth 2 Lakhs"
+      <content>"Wife Kills Man For 8 Crores, Dumps Body 800 km Away. Cops Track His Mercedes"
+      <content>"Will Chop Them Up...': Mithun Chakraborty At Kolkata Rally With Amit Shah"
+      <content>"PM Launches C-295 Aircraft Facility In Gujarat, Gives Hat Tip To Ratan Tata"
+    </contents>
+  </block>
+  <block>
+    <index>8</index>
+    <tags>
+      <tag>footer</tag>
+    </tags>
+    <contents>
+      <content>"NDTV Group Sites"
+      <content>"News"
+      <content>"Hindi"
+      <content>"Business"
+      <content>"Movies"
+      <content>"Cricket"
+      <content>"Food"
+      <content>"Tech"
+      <content>"Education"
+      <content>"Health"
+      <content>"Lifestyle"
+      <content>"MPCG"
+      <content>"Rajasthan"
+      <content>"Marathi"
+      <content>"This website follows the DNPA Code of Ethics "
+    </contents>
+  </block>
+</blocks>
+```
+This XML document represents the semantically relevant blocks of the HTML content. Each block is assigned an index, and the tags and contents are listed accordingly. The content of each block is extracted and stored as a list of strings. The order of the blocks matches the order of the content in the original HTML document.

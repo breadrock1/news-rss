@@ -58,7 +58,7 @@ impl CrawlerService for LlmCrawler {
             let err = anyhow::Error::msg("returned empty response from llm");
             return Err(err);
         };
-
+        
         Self::extract_semantic_blocks(&content_data.to_string())
     }
 
@@ -93,26 +93,17 @@ impl LlmCrawler {
         }
     }
 
-    fn extract_json_data(text_data: &str) -> Result<String, anyhow::Error> {
-        let necessary_tags = vec!["article", "content"];
-        let split_text_data = Regex::new(REMOVE_BLOCKS_REGEX)?
-            .splitn(text_data, REGEX_MATCH_SPLIT_AMOUNT)
-            .collect::<Vec<&str>>();
+    pub fn extract_semantic_blocks(text_data: &str) -> Result<String, anyhow::Error> {
+        let Some(founded) = Regex::new(FIND_LLM_BLOCKS_REGEX)?.find(text_data) else {
+            tracing::warn!("failed to match blocks into llm response by regex");
+            return Ok(text_data.to_string())
+        };
 
-        let json_str_data = split_text_data[2];
-        let semantic_blocks = serde_json::from_str::<Vec<SemanticBlock>>(json_str_data)?;
+        let founded_string = founded
+            .as_str()
+            .replace("<blocks>", "")
+            .replace("</blocks>", "");
 
-        let merged_data = semantic_blocks
-            .into_iter()
-            .filter(|it| {
-                it.tags()
-                    .iter()
-                    .any(|i| necessary_tags.contains(&i.as_str()))
-            })
-            .map(|it| it.content().join("\n"))
-            .collect::<Vec<String>>()
-            .join("\n");
-
-        Ok(merged_data)
+        Ok(founded_string)
     }
 }

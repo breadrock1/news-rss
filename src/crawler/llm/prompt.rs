@@ -2,7 +2,7 @@ pub(super) const LLM_MODEL_NAME: &'static str = "gpt-4o-2024-08-06";
 pub(super) const SYSTEM_PROMPT_NAME: &'static str = "system-prompt";
 pub(super) const USER_QUERY_NAME: &'static str = "user-query";
 
-pub(super) const SCRAPE_HTML_SYSTEM_PROMPT_SUM: &'static str = r#"
+pub(super) const _SCRAPE_HTML_SYSTEM_PROMPT_SUM: &'static str = r#"
 Here is the URL of the webpage:
 <url>{URL}</url>
 

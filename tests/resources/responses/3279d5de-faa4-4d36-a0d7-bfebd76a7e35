@@ -1,0 +1,146 @@
+Here is the XML output within <blocks> tags:
+
+
+<blocks>
+  <block>
+    <index>0</index>
+    <tags>
+      <tag>navigation</tag>
+      <tag>menu</tag>
+    </tags>
+    <contents>
+      <content>NDTV</content>
+      <content>World</content>
+      <content>Profit</content>
+      <content>हिंदी</content>
+      <content>Sports</content>
+      <content>MOVIES</content>
+      <content>FOOD</content>
+      <content>LIFESTYLE</content>
+      <content>HEALTH</content>
+      <content>SWASTH</content>
+      <content>TECH</content>
+      <content>Influencers</content>
+      <content>Games</content>
+      <content>Big Bonus</content>
+      <content>SHOPPING</content>
+      <content>APPS</content>
+    </contents>
+  </block>
+  <block>
+    <index>1</index>
+    <tags>
+      <tag>news</tag>
+      <tag>updates</tag>
+    </tags>
+    <contents>
+      <content>US Election</content>
+      <content>US</content>
+      <content>UK</content>
+      <content>Middle East</content>
+      <content>India Global</content>
+      <content>Asia</content>
+      <content>Europe</content>
+      <content>Australia</content>
+      <content>Américas</content>
+      <content>Africa</content>
+      <content>Videos</content>
+    </contents>
+  </block>
+  <block>
+    <index>2</index>
+    <tags>
+      <tag>categories</tag>
+    </tags>
+    <contents>
+      <content>Bollywood</content>
+      <content>World News</content>
+      <content>Diaspora News</content>
+      <content>Science &amp; Knowledge</content>
+      <content>Sports News &amp; Updates</content>
+      <content>Web Stories</content>
+      <content>Featured Stories</content>
+      <content>Offbeat Stories</content>
+      <content>Opinion</content>
+      <content>People</content>
+      <content>Live TV - India</content>
+      <content>Photos</content>
+      <content>Study Abroad</content>
+      <content>Student Reporter</content>
+    </contents>
+  </block>
+  <block>
+    <index>3</index>
+    <tags>
+      <tag>latest_news</tag>
+    </tags>
+    <contents>
+      <content>Mercedes-AMG C 63 S E Performance To Be Launched On 12 November</content>
+      <content>Opinion | Endorsement Sans Election: How Indira Gandhi's Death Changed Everything</content>
+      <content>"Copyist", "Cocktail Ideology": DMK, AIADMK Mock Actor-Politician Vijay's Party</content>
+      <content>Chinese Woman Scams Victims Of Rs 1.77 Crore With Fake Airline Jobs, Uses Plastic Surgery to Avoid Arrest</content>
+      <content>Mpox: Recent Cases, Signs &amp; What To Do If You're At Risk</content>
+    </contents>
+  </block>
+  <block>
+    <index>4</index>
+    <tags>
+      <tag>trending</tag>
+    </tags>
+    <contents>
+      <content>World News</content>
+      <content>PNR Status</content>
+      <content>Education News</content>
+      <content>Business News</content>
+      <content>Sports News</content>
+      <content>MP Chhattisgarh News</content>
+      <content>NDTV Profit</content>
+      <content>Marathi News</content>
+      <content>Telangana Murder Case</content>
+      <content>PM Modi in Gujarat</content>
+      <content>Tirupati's ISKCON Temple</content>
+    </contents>
+  </block>
+  <block>
+    <index>5</index>
+    <tags>
+      <tag>article</tag>
+    </tags>
+    <contents>
+      <content>The Secret Train Evacuating Wounded Ukrainian Soldiers</content>
+      <content>Nearly three years after Russian forces invaded Ukraine, many medical facilities in war-battered eastern Ukraine have been damaged or destroyed.</content>
+      <content>Agence France-Presse</content>
+      <content>World News</content>
+      <content>Oct 28, 2024 13:18 pm IST</content>
+      <content>Published On Oct 28, 2024 13:18 pm IST</content>
+      <content>Last Updated On Oct 28, 2024 13:18 pm IST</content>
+      <content>Read Time: 4 mins</content>
+      <content>Share</content>
+    </contents>
+  </block>
+  <block>
+    <index>6</index>
+    <tags>
+      <tag>related_news</tag>
+    </tags>
+    <contents>
+      <content>PM Modi Can Influence End Of Ukraine War: Volodymyr Zelenskyy</content>
+      <content>"Wiped Off The Face Of The Earth": How Russia Erased A Ukrainian City</content>
+      <content>Why Do We Fight Wars? NSA Ajit Doval Explains Amid Russia-Ukraine War</content>
+    </contents>
+  </block>
+  <block>
+    <index>7</index>
+    <tags>
+      <tag>trending_news</tag>
+    </tags>
+    <contents>
+      <content>Days Before Retirement, Chief Justice Speaks On PM's Ganesh Puja Visit Row</content>
+      <content>Spiritual Preacher Faces Backlash For Flaunting Luxury Dior Bag Worth Rs 2 Lakhs</content>
+      <content>Wife Kills Businessman After He Refused Rs 8 Crore, Drives 800 Kms To Dump Body</content>
+      <content>PM Launches C-295 Aircraft Facility In Gujarat, Gives Hat Tip To Ratan Tata</content>
+    </contents>
+  </block>
+</blocks>
+
+

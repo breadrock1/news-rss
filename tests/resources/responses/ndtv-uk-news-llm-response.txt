@@ -1,0 +1,307 @@
+"
+[
+  {
+    "index": 0,
+    "tags": ["NDTV", "Global Navigation"],
+    "content": [
+      "NDTV ",
+      "World ",
+      "Profit ",
+      "हिंदी ",
+      "Sports ",
+      "MOVIES ",
+      "FOOD ",
+      "LIFESTYLE ",
+      "HEALTH ",
+      "SWASTH ",
+      "TECH ",
+      "Influencers ",
+      "Games ",
+      "Big Bonus ",
+      "SHOPPING ",
+      "APPS ",
+      "[ ]",
+      "US Election ",
+      "US ",
+      "UK ",
+      "Middle East ",
+      "India Global ",
+      "Asia ",
+      "Europe ",
+      "Australia ",
+      "Americas ",
+      "Africa ",
+      "Videos ",
+      "Bollywood",
+      "World News",
+      "Diaspora News",
+      "Science & Knowledge",
+      "Sports News & Updates",
+      "Web Stories",
+      "Featured Stories",
+      "Offbeat Stories",
+      "Opinion",
+      "People",
+      "Live TV - India",
+      "Photos",
+      "Study Abroad",
+      "Student Reporter",
+      "Login",
+      "[Get App]",
+      "Latest News",
+      "Trending",
+      "The Secret Train Evacuating Wounded Ukrainian Soldiers"
+    ]
+  },
+  {
+    "index": 1,
+    "tags": ["Ukraine", "Russia", "War"],
+    "content": [
+      "Nearly three years after Russian forces invaded Ukraine, many medical facilities in war-battered eastern Ukraine have been damaged or destroyed.",
+      "Agence France-Presse",
+      "World News",
+      "Oct 28, 2024 13:18 pm IST",
+      "Published On Oct 28, 2024 13:18 pm IST",
+      "Last Updated On Oct 28, 2024 13:18 pm IST",
+      "Read Time: 4 mins",
+      "Share",
+      "Twitter",
+      "WhatsApp",
+      "Facebook",
+      "Reddit",
+      "Email",
+      "Olena, a military medic, checks on injured Ukrainian soldiers on a military evacuation train.",
+      "It looks like an ordinary train waiting to depart an ordinary station, but through its fogged windows, a Ukrainian serviceman with face injuries lies stretched out on a gurney.",
+      "All of the other blue-and-yellow carriages of this train operated by the military are carrying wounded soldiers to hospitals away from the precarious front line.",
+      "For Oleksandr, the army doctor overseeing the evacuation, there are clear benefits to rail: many people can be moved at once and it is safer than transporting wounded soldiers by helicopter, given Russian superiority in Ukraine's airspace.",
+      "But there are risks too.",
+      "Our adversary in the war does not distinguish between what's medical and military, so we take certain security measures,"
+    ]
+  },
+  {
+    "index": 2,
+    "tags": ["Ukraine", "War", "Evacuation"],
+    "content": [
+      "Ambulances arrived at the station carrying dozens of wounded troops who were then hauled onto the train on stretchers and settled on beds with floral-patterned sheets.",
+      "Ukrainian flags and hand-drawn pictures by children annotated with patriotic messages lined the walls inside the train.",
+      "The carriages resemble a hospital until the train rolls away from the platform and gently rocks patients and staff -- and everything else inside -- as it crawls farther from the front.",
+      "We do everything on the move, everything. Starting from the usual intravenous injections, ending with incubations,"
+    ]
+  },
+  {
+    "index": 3,
+    "tags": ["Ukraine", "War", "Casualties"],
+    "content": [
+      "The journeys to and from the front, where Ukraine is coming under increasing pressure, have given Viktorya a painful insight into the cost of the conflict grinding through its third year.",
+      "I understand the number of wounded now. It's very hard to see it every day,"
+    ]
+  },
+  {
+    "index": 4,
+    "tags": ["Ukraine", "War", "Psychological Impact"],
+    "content": [
+      "The wounded soldiers' preoccupations lie elsewhere.",
+      "Their psychological state is not good.",
+      "They're not worried about losing a limb or whatever else. What depresses them is how their comrades are and how their family is,"
+    ]
+  },
+  {
+    "index": 5,
+    "tags": ["Ukraine", "War", "Evacuation"],
+    "content": [
+      "One Ukrainian serviceman on the train was being treated for a gunshot wound after being caught in a Russian ambush that also killed one of his fellow soldiers.",
+      "Four of us left but not all of us returned,"
+    ]
+  },
+  {
+    "index": 6,
+    "tags": ["NDTV", "Global Navigation"],
+    "content": [
+      "Track Latest News Live on NDTV.com and get news updates from India and around the world.",
+      "Follow us:",
+      "Ukraine - Russia Conflict",
+      "Ukraine War",
+      "Ukraine Russia War"
+    ]
+  },
+  {
+    "index": 7,
+    "tags": ["NDTV", "Related News"],
+    "content": [
+      "PM Modi Can Influence End Of Ukraine War: Volodymyr Zelenskyy",
+      "Wiped Off The Face Of The Earth: How Russia Erased A Ukrainian City",
+      "Why Do We Fight Wars? NSA Ajit Doval Explains Amid Russia-Ukraine War"
+    ]
+  },
+  {
+    "index": 8,
+    "tags": ["NDTV", "Trending News"],
+    "content": [
+      "Days Before Retirement, Chief Justice Speaks On PM's Ganesh Puja Visit Row",
+      "Spiritual Preacher Faces Backlash For Flaunting Luxury Dior Bag Worth 2 Lakhs",
+      "Wife Kills Man For 8 Crores, Dumps Body 800 km Away. Cops Track His Mercedes",
+      "Will Chop Them Up...': Mithun Chakraborty At Kolkata Rally With Amit Shah",
+      "PM Launches C-295 Aircraft Facility In Gujarat, Gives Hat Tip To Ratan Tata"
+    ]
+  },
+  {
+    "index": 9,
+    "tags": ["NDTV", "Quick Links"],
+    "content": [
+      "Latest News",
+      "India News",
+      "World News",
+      "PNR Status",
+      "Education News",
+      "Business News",
+      "Sports News",
+      "MP Chhattisgarh News",
+      "NDTV Profit",
+      "Marathi News",
+      "Telangana Murder Case",
+      "PM Modi in Gujarat",
+      "Tirupati's ISKCON Temple"
+    ]
+  },
+  {
+    "index": 10,
+    "tags": ["NDTV", "About Us"],
+    "content": [
+      "Follow us on",
+      "Facebook",
+      "Twitter",
+      "Instagram",
+      "Linkedin",
+      "Youtube",
+      "Whatsapp",
+      "Threads",
+      "Snapchat"
+    ]
+  },
+  {
+    "index": 11,
+    "tags": ["NDTV", "Other Verticals"],
+    "content": [
+      "News",
+      "Hindi",
+      "Business",
+      "Movies",
+      "Cricket",
+      "Food",
+      "Tech",
+      "Education",
+      "Health",
+      "Lifestyle",
+      "MPCG",
+      "Rajasthan",
+      "Marathi"
+    ]
+  },
+  {
+    "index": 12,
+    "tags": ["NDTV", "Terms & Conditions"],
+    "content": [
+      "This website follows the DNPA Code of Ethics",
+      "Copyright NDTV Convergence Limited 2024. All rights reserved."
+    ]
+  },
+  {
+    "index": 13,
+    "tags": ["NDTV", "Get App"],
+    "content": [
+      "Get App for Better Experience",
+      "Get it on Google Play",
+      "Download on the App Store"
+    ]
+  },
+  {
+    "index": 14,
+    "tags": ["NDTV", "News Updates"],
+    "content": [
+      "Live TV",
+      "India",
+      "Latest",
+      "Video",
+      "Profit",
+      "Movies",
+      "Cricket",
+      "Cities"
+    ]
+  },
+  {
+    "index": 15,
+    "tags": ["NDTV", "Featured"],
+    "content": [
+      "Elections",
+      "Notifications",
+      "Opinion",
+      "Web Stories",
+      "Trends",
+      "Feature"
+    ]
+  },
+  {
+    "index": 16,
+    "tags": ["NDTV", "More Links"],
+    "content": [
+      "Offbeat",
+      "Science",
+      "People",
+      "South",
+      "Education",
+      "Tech",
+      "Food",
+      "Sports",
+      "Health",
+      "Swirlster",
+      "Photos",
+      "TV Schedule",
+      "Big Bonus REGISTER NOW",
+      "Shopping",
+      "Toolbox"
+    ]
+  },
+  {
+    "index": 17,
+    "tags": ["NDTV", "Follow Us On"],
+    "content": [
+      "Facebook",
+      "Twitter",
+      "Instagram",
+      "Linkedin",
+      "Youtube",
+      "Whatsapp",
+      "Threads",
+      "Snapchat"
+    ]
+  },
+  {
+    "index": 18,
+    "tags": ["NDTV", "Doctor_logo on dark light bg"],
+    "content": [
+      "Doctor_logo on dark light bg Created with Sketch."
+    ]
+  },
+  {
+    "index": 19,
+    "tags": ["NDTV", "search olympic crypto_icon"],
+    "content": [
+      "search olympic crypto_icon"
+    ]
+  },
+  {
+    "index": 20,
+    "tags": ["NDTV", "arrow-rgt arrow-next arrow-up close reddit-fill facebook-fill whatsapp-fill cog left-arrow snapchat-fill"],
+    "content": [
+      "arrow-rgt arrow-next arrow-up close reddit-fill facebook-fill whatsapp-fill cog left-arrow snapchat-fill"
+    ]
+  },
+  {
+    "index": 21,
+    "tags": ["NDTV", "Listen to the latest songs"],
+    "content": [
+      "Listen to the latest songs, only on JioSaavn.com"
+    ]
+  }
+]
+"

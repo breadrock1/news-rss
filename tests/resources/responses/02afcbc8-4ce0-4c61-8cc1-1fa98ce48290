@@ -1,0 +1,162 @@
+I will provide you with the cleaned HTML content, broken down into semantically relevant blocks, along with the list of relevant semantic tags for each block.
+
+Here is the cleaned HTML content:
+
+```
+<html>
+  <body>
+    <!-- Block 1: Navigation Menu -->
+    <ul>
+      <li>NDTV</li>
+      <li>World</li>
+      <li>Profit</li>
+      <li>हिंदी</li>
+      <li>Sports</li>
+      <li>Movies</li>
+      <li>FOOD</li>
+      <li>LIFESTYLE</li>
+      <li>HEALTH</li>
+      <li>SWASTH</li>
+      <li>TECH</li>
+      <li>Influencers</li>
+      <li>Games</li>
+      <li>Big Bonus</li>
+      <li>SHOPPING</li>
+      <li>APPS</li>
+    </ul>
+
+    <!-- Block 2: Section Links -->
+    <ul>
+      <li>US Election</li>
+      <li>US</li>
+      <li>UK</li>
+      <li>Middle East</li>
+      <li>India Global</li>
+      <li>Asia</li>
+      <li>Europe</li>
+      <li>Australia</li>
+      <li>Americas</li>
+      <li>Africa</li>
+      <li>Videos</li>
+    </ul>
+
+    <!-- Block 3: Latest News -->
+    <h2>Latest News</h2>
+    <ul>
+      <li>Mercedes-AMG C 63 S E Performance To Be Launched On 12 November</li>
+      <li>Opinion | Endorsement Sans Election: How Indira Gandhi's Death Changed Everything</li>
+      <li>"Copyist", "Cocktail Ideology": DMK, AIADMK Mock Actor-Politician Vijay's Party</li>
+      <li>Chinese Woman Scams Victims Of Rs 1.77 Crore With Fake Airline Jobs, Uses Plastic Surgery to Avoid Arrest</li>
+      <li>Mpox: Recent Cases, Signs & What To Do If You're At Risk</li>
+    </ul>
+
+    <!-- Block 4: Trending News -->
+    <h2>Trending</h2>
+    <ul>
+      <li>World News</li>
+      <li>PNR Status</li>
+      <li>Education News</li>
+      <li>Business News</li>
+      <li>Sports News</li>
+      <li>MP Chhattisgarh News</li>
+      <li>NDTV Profit</li>
+      <li>Marathi News</li>
+      <li>Telangana Murder Case</li>
+      <li>PM Modi in Gujarat</li>
+      <li>Tirupati's ISKCON Temple</li>
+    </ul>
+
+    <!-- Block 5: Article -->
+    <h2>The Secret Train Evacuating Wounded Ukrainian Soldiers</h2>
+    <p>Nearly three years after Russian forces invaded Ukraine, many medical facilities in war-battered eastern Ukraine have been damaged or destroyed.</p>
+    <p>...</p>
+
+    <!-- Block 6: Related News -->
+    <h2>Related News</h2>
+    <ul>
+      <li>PM Modi Can Influence End Of Ukraine War: Volodymyr Zelenskyy</li>
+      <li>"Wiped Off The Face Of The Earth": How Russia Erased A Ukrainian City</li>
+      <li>Why Do We Fight Wars? NSA Ajit Doval Explains Amid Russia-Ukraine War</li>
+    </ul>
+
+    <!-- Block 7: Trending News -->
+    <h2>Trending News</h2>
+    <ul>
+      <li>Days Before Retirement, Chief Justice Speaks On PM's Ganesh Puja Visit Row</li>
+      <li>Spiritual Preacher Faces Backlash For Flaunting Luxury Dior Bag Worth Rs 2 Lakh</li>
+      <li>Wife Kills Businessman After He Refused Rs 8 Crore, Drives 800 Km To Dump Body</li>
+      <li>PM Launches C-295 Aircraft Facility In Gujarat, Gives Hat Tip To Ratan Tata</li>
+    </ul>
+  </body>
+</html>
+```
+
+Here are the lists of relevant semantic tags for each block:
+
+Block 1: Navigation Menu
+- nav
+- menu
+- list
+- item
+
+Block 2: Section Links
+- nav
+- list
+- item
+- section
+
+Block 3: Latest News
+- article
+- h2
+- list
+- item
+- news
+
+Block 4: Trending News
+- article
+- h2
+- list
+- item
+- news
+
+Block 5: Article
+- article
+- h2
+- p
+- content
+
+Block 6: Related News
+- article
+- h2
+- list
+- item
+- news
+
+Block 7: Trending News
+- article
+- h2
+- list
+- item
+- news
+
+Here is the filtered output of the content:
+
+```
+<blocks>
+  "Nearly three years after Russian forces invaded Ukraine, many medical facilities in war-battered eastern Ukraine have been damaged or destroyed."
+  "It revives a process used in World War II, with several refitted trains now taking wounded troops from the front."
+  "We do everything on the move, everything. Starting from the usual intravenous injections, ending with incubations,"
+  "I understand the number of wounded now. It's very hard to see it every day,"
+  "Their psychological state is not good. They're not worried about losing a limb or whatever else. What depresses them is how their comrades are and how their family is,"
+  "It is of course very stressful and yes, you breathe a sigh of relief when you arrive and unload,"
+  "PM Modi Can Influence End Of Ukraine War: Volodymyr Zelenskyy"
+  "Wiped Off The Face Of The Earth": How Russia Erased A Ukrainian City"
+  "Why Do We Fight Wars? NSA Ajit Doval Explains Amid Russia-Ukraine War"
+  "Days Before Retirement, Chief Justice Speaks On PM's Ganesh Puja Visit Row"
+  "Spiritual Preacher Faces Backlash For Flaunting Luxury Dior Bag Worth Rs 2 Lakh"
+  "Wife Kills Businessman After He Refused Rs 8 Crore, Drives 800 Km To Dump Body"
+  "PM Launches C-295 Aircraft Facility In Gujarat, Gives Hat Tip To Ratan Tata"
+</blocks>
+```
+
+Note that I have removed blocks that do not contain any relevant semantic tags like article, content, text, news, feeds.

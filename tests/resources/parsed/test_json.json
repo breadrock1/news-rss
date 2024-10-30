@@ -1,0 +1,158 @@
+[
+  {
+      "content": [
+          "1. How relevant is this ad to you?",
+          "2. Did you encounter any technical issues?",
+          "Video player was slow to load content Video content never loaded Ad froze or did not finish loading Video content did not start after ad Audio on ad was too loud Other issues",
+          "Ad never loaded Ad prevented/slowed the page from loading Content moved around while ad loaded Ad was repetitive to ads I've seen previously Other issues"
+      ],
+      "index": 0,
+      "tags": [
+          "ad",
+          "feedback"
+      ]
+  },
+  {
+      "content": [
+          "[ Arts ]",
+          "[ Design ]",
+          "[ Fashion ]",
+          "[ Architecture ]",
+          "[ Luxury ]",
+          "[ Beauty ]",
+          "[ Video ]",
+          "More",
+          "[ Arts ] [ Design ] [ Fashion ] [ Architecture ] [ Luxury ] [ Beauty ] [ Video ]"
+      ],
+      "index": 1,
+      "tags": [
+          "navigation",
+          "menu"
+      ]
+  },
+  {
+      "content": [
+          "* [ Settings ]",
+          "* [ Topics You Follow ]",
+          "* [ Sign Out ]",
+          "Your CNN account Sign in to your CNN account"
+      ],
+      "index": 2,
+      "tags": [
+          "user",
+          "account"
+      ]
+  },
+  {
+      "content": [
+          "[ Live TV ]",
+          "[ Listen ]",
+          "[ Watch ]",
+          "Edition",
+          "[ US ]",
+          "[ International ]",
+          "[ Arabic ]",
+          "[ Español ]",
+          "Edition"
+      ],
+      "index": 3,
+      "tags": [
+          "header",
+          "edition"
+      ]
+  },
+  {
+      "content": [
+          "* [ World ]",
+          "  * [ Africa ]",
+          "  * [ Americas ]",
+          "  * [ Asia ]",
+          "  * [ Australia ]",
+          "  * [ China ]",
+          "  * [ Europe ]",
+          "  * [ India ]",
+          "  * [ Middle East ]",
+          "  * [ United Kingdom ]"
+      ],
+      "index": 4,
+      "tags": [
+          "categories",
+          "menu"
+      ]
+  },
+  {
+      "content": [
+          "# This is the world’s smallest Rubik’s Cube. And it actually works",
+          "By Chris Lau and Nodoka Katsura, CNN",
+          "2 minute read",
+          "Published 4:16 AM EDT, Fri October 4, 2024",
+          "Link Copied!",
+          "[The tiniest Rubik’s Cube.]",
+          "The tiniest Rubik’s Cube.",
+          "TM & Spin Master Toys UK Limited",
+          "Tokyo CNN —"
+      ],
+      "index": 5,
+      "tags": [
+          "article",
+          "rubik's cube"
+      ]
+  },
+  {
+      "content": [
+          "Japanese toymaker MegaHouse has unveiled a miniature Rubik’s Cube — one so tiny that you might need a pair of tweezers to solve it.",
+          "Each face of the cube, which is made from aluminum, measures about five millimeters (around 0.2 inches) across.",
+          "It was made available for pre-order on the manufacturer’s website on Thursday, with deliveries expected next April.",
+          "“The 5-milimeter Rubik’s Cube is the result of the trinity of machines, cutting tools, and players’ passion,” said Kiyokazu Saito, president of Iriso Precision, the company brought in for the precision cutting, in a promotional video on the toymaker’s website."
+      ],
+      "index": 6,
+      "tags": [
+          "article",
+          "rubik's cube"
+      ]
+  },
+  {
+      "content": [
+          "Weighing just 0.3 grams (about 0.01 ounces), the puzzle is about a 1,000th of the size of the original, which measures around 2.2 inches across each face.",
+          "And each side of the nine squares on the device",
+          "s six faces measures just 1.6 millimeters (around 0.06 inches).",
+          "MegaHouse told CNN that the company started conceptualizing it four years ago and began the process to produce it in 2022.",
+          "Guinness World Record confirmed the micro-cube as the world’s smallest rotating puzzle cube in August."
+      ],
+      "index": 7,
+      "tags": [
+          "article",
+          "rubik's cube"
+      ]
+  },
+  {
+      "content": [
+          "Related article How quickly can you solve a Rubik’s Cube? A 21-year-old set a new world record that will stun you",
+          "[ [Chris Lau] ]",
+          "By [Chris Lau][158] and Nodoka Katsura, CNN"
+      ],
+      "index": 8,
+      "tags": [
+          "related",
+          "article"
+      ]
+  },
+  {
+      "content": [
+          "[1]: https://edition.cnn.com",
+          "[2]: https://edition.cnn.com/style",
+          "[3]: https://edition.cnn.com/style/arts",
+          "[4]: https://edition.cnn.com/style/design",
+          "[5]: https://edition.cnn.com/style/fashion",
+          "[6]: https://edition.cnn.com/style/architecture",
+          "[7]: https://edition.cnn.com/style/luxury",
+          "[8]: https://edition.cnn.com/style/beauty",
+          "[9]: https://edition.cnn.com/style/videos"
+      ],
+      "index": 9,
+      "tags": [
+          "footer",
+          "links"
+      ]
+  }
+]
