@@ -1,6 +1,9 @@
 [logger]
 level = "debug"
 
+[server]
+port = 2865
+
 [cache.local]
 expired_secs = 10368000
 

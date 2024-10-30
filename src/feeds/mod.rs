@@ -6,6 +6,7 @@ pub trait FetchTopic {
     type Error;
     type Response;
 
+    fn get_source(&self) -> String;
     async fn load_news(&self) -> Result<Self::Response, Self::Error>;
     async fn launch_fetching(&self) -> Result<(), anyhow::Error>;
 }

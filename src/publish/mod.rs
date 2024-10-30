@@ -5,6 +5,7 @@ pub mod pgsql;
 pub mod rabbit;
 
 use crate::publish::models::PublishNews;
+
 use std::fmt::Debug;
 
 #[async_trait::async_trait]

@@ -1,14 +1,21 @@
+use derive_builder::Builder;
 use getset::{CopyGetters, Getters, Setters};
 use serde::Deserialize;
 
-#[derive(Clone, Deserialize, Getters, CopyGetters, Setters)]
+#[derive(Builder, Clone, Deserialize, Getters, CopyGetters, Setters)]
+#[getset(get_copy = "pub")]
 pub struct RssConfig {
+    #[getset(skip)]
     #[getset(get = "pub", set = "pub")]
     target_url: String,
-    #[getset(get_copy = "pub")]
     max_retries: u32,
-    #[getset(get_copy = "pub")]
     timeout: u64,
-    #[getset(get_copy = "pub", set = "pub")]
+    #[getset(set = "pub")]
     interval_secs: u64,
+}
+
+impl RssConfig {
+    pub fn builder() -> RssConfigBuilder {
+        RssConfigBuilder::default()
+    }
 }

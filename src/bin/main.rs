@@ -13,9 +13,11 @@ use news_rss::crawler::native::NativeCrawler;
 use news_rss::feeds::rss_feeds::RssFeeds;
 use news_rss::feeds::FetchTopic;
 use news_rss::publish::rabbit::RabbitPublisher;
-use news_rss::{logger, ServiceConnect};
+use news_rss::server::ServerApp;
+use news_rss::{logger, server, ServiceConnect};
+use std::collections::HashMap;
 use std::sync::Arc;
-use tokio::task::JoinError;
+use tokio::net::TcpListener;
 
 #[tokio::main]
 async fn main() -> Result<(), anyhow::Error> {
@@ -48,36 +50,26 @@ async fn main() -> Result<(), anyhow::Error> {
             rss_config.set_target_url(it.to_string());
             RssFeeds::new(&rss_config, publish.clone(), cache.clone(), crawler.clone()).ok()
         })
-        .collect::<Vec<RssFeeds<_, _, _>>>();
+        .map(|it| (it.get_source(), it))
+        .collect::<HashMap<String, RssFeeds<_, _, _>>>();
 
     let rss_workers = rss_feeds
         .into_iter()
-        .map(|it| tokio::spawn(async move { it.launch_fetching().await }))
-        .collect::<Vec<_>>();
+        .map(|it| {
+            let source = it.0;
+            let worker = it.1;
+            let task = tokio::spawn(async move { worker.launch_fetching().await });
+            (source, task)
+        })
+        .collect::<HashMap<String, _>>();
 
-    for worker in rss_workers {
-        let res = worker.await;
-        extract_worker_result(res);
-    }
+    let address = format!("0.0.0.0:{}", config.server().port());
+    let listener = TcpListener::bind(address).await?;
+    let server_app = ServerApp::new(rss_workers, publish.clone(), cache.clone(), crawler.clone());
+    let app = server::init_server(server_app);
+    axum::serve(listener, app).await.unwrap();
 
     Ok(())
-}
-
-fn extract_worker_result(result: Result<Result<(), anyhow::Error>, JoinError>) {
-    let join_result = match result {
-        Ok(res) => res,
-        Err(err) => {
-            tracing::error!("failed to joint worker: {err:#?}");
-            return;
-        }
-    };
-
-    if let Err(err) = join_result {
-        tracing::error!("internal worker error: {err:#?}");
-        return;
-    }
-
-    tracing::info!("worker has been terminated successful");
 }
 
 pub async fn build_local_cache(config: &ServiceConfig) -> Result<Arc<LocalCache>, anyhow::Error> {

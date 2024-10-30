@@ -7,11 +7,11 @@ use crate::publish::rabbit::errors::RabbitPublishError;
 use crate::publish::Publisher;
 use crate::ServiceConnect;
 
-use lapin::options::{
-    BasicPublishOptions, ExchangeDeclareOptions, QueueBindOptions, QueueDeclareOptions,
-};
+use lapin::options::{BasicPublishOptions, ExchangeDeclareOptions};
+use lapin::options::{QueueBindOptions, QueueDeclareOptions};
 use lapin::types::FieldTable;
-use lapin::{BasicProperties, Channel, Connection, ConnectionProperties, ExchangeKind};
+use lapin::{BasicProperties, ConnectionProperties, ExchangeKind};
+use lapin::{Channel, Connection};
 use std::sync::Arc;
 
 #[derive(Clone)]
@@ -50,12 +50,12 @@ impl ServiceConnect for RabbitPublisher {
             )
             .await?;
 
+        let queue_decl_opts = QueueDeclareOptions {
+            durable: true,
+            ..Default::default()
+        };
         channel
-            .queue_declare(
-                config.stream_name(),
-                QueueDeclareOptions::default(),
-                FieldTable::default(),
-            )
+            .queue_declare(config.stream_name(), queue_decl_opts, FieldTable::default())
             .await?;
 
         channel

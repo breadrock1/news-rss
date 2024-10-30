@@ -47,6 +47,10 @@ where
     type Error = RssError;
     type Response = rss::Channel;
 
+    fn get_source(&self) -> String {
+        self.config().target_url().to_owned()
+    }
+
     async fn load_news(&self) -> Result<Self::Response, Self::Error> {
         let max_retries = self.config().max_retries();
         let retry_policy = ExponentialBackoff::builder().build_with_max_retries(max_retries);
@@ -110,10 +114,6 @@ where
             cacher: cache,
             crawler,
         })
-    }
-
-    pub fn get_topic_name(&self) -> String {
-        self.config.target_url().clone()
     }
 
     pub async fn processing_event(&self, channel: rss::Channel) -> Result<(), anyhow::Error> {
