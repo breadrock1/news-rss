@@ -18,6 +18,7 @@ use news_rss::{logger, server, ServiceConnect};
 use std::collections::HashMap;
 use std::sync::Arc;
 use tokio::net::TcpListener;
+use tower_http::trace;
 
 #[tokio::main]
 async fn main() -> Result<(), anyhow::Error> {
@@ -63,11 +64,16 @@ async fn main() -> Result<(), anyhow::Error> {
         })
         .collect::<HashMap<String, _>>();
 
-    let address = format!("0.0.0.0:{}", config.server().port());
-    let listener = TcpListener::bind(address).await?;
+    let listener = TcpListener::bind(config.server().address()).await?;
     let server_app = ServerApp::new(rss_workers, publish.clone(), cache.clone(), crawler.clone());
-    let app = server::init_server(server_app);
-    axum::serve(listener, app).await.unwrap();
+
+    let trace_layer = trace::TraceLayer::new_for_http()
+        .make_span_with(trace::DefaultMakeSpan::new().level(tracing::Level::INFO))
+        .on_response(trace::DefaultOnResponse::new().level(tracing::Level::INFO));
+
+    let app = server::init_server(server_app).layer(trace_layer);
+
+    axum::serve(listener, app).await?;
 
     Ok(())
 }

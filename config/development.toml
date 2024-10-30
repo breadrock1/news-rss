@@ -2,7 +2,7 @@
 level = "debug"
 
 [server]
-port = 2865
+address = "0.0.0.0:2865"
 
 [cache.local]
 expired_secs = 10368000
