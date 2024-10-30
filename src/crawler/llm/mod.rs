@@ -58,7 +58,7 @@ impl CrawlerService for LlmCrawler {
             let err = anyhow::Error::msg("returned empty response from llm");
             return Err(err);
         };
-        
+
         Self::extract_semantic_blocks(&content_data.to_string())
     }
 
@@ -96,7 +96,7 @@ impl LlmCrawler {
     pub fn extract_semantic_blocks(text_data: &str) -> Result<String, anyhow::Error> {
         let Some(founded) = Regex::new(FIND_LLM_BLOCKS_REGEX)?.find(text_data) else {
             tracing::warn!("failed to match blocks into llm response by regex");
-            return Ok(text_data.to_string())
+            return Ok(text_data.to_string());
         };
 
         let founded_string = founded

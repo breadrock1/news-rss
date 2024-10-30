@@ -8,8 +8,10 @@ mod test_crawler_llm {
     // const INPUT_HTML_FILE: &[u8] = include_bytes!("resources/ndtv-uk-news.html");
     // const INPUT_HTML_FILE: &[u8] = include_bytes!("resources/cnn-news.html");
     const INPUT_HTML_URL: &str = "https://edition.cnn.com/2024/10/28/media/jeff-bezos-defends-washington-post-endorsement/index.html";
-    const XML_LLM_RESPONSE_FILE_STR: &str = include_str!("resources/3279d5de-faa4-4d36-a0d7-bfebd76a7e35");
-    const JSON_LLM_RESPONSE_FILE_STR: &str = include_str!("resources/cnn-news-llm-response.txt");
+    const XML_LLM_RESPONSE_FILE_STR: &str =
+        include_str!("resources/responses/3279d5de-faa4-4d36-a0d7-bfebd76a7e35");
+    const JSON_LLM_RESPONSE_FILE_STR: &str =
+        include_str!("resources/responses/cnn-news-llm-response.txt");
 
     #[tokio::test]
     async fn test_llm_crawler() -> Result<(), anyhow::Error> {
@@ -44,13 +46,19 @@ mod test_crawler_llm {
         logger::init_logger(config.logger())?;
 
         let text_data = JSON_LLM_RESPONSE_FILE_STR;
-        let Some(founded) = regex::Regex::new(r#"<blocks>[\w\W]+?<\/blocks>"#)?.find(text_data) else {
+        let Some(founded) = regex::Regex::new(r#"<blocks>[\w\W]+?<\/blocks>"#)?.find(text_data)
+        else {
             tracing::warn!("failed to match blocks into llm response by regex");
             return Ok(());
         };
 
-        let text_data_0 = founded.as_str().replace("<blocks>", "").replace("</blocks>", "to");
-        let text_data = regex::Regex::new(r#"^\""#)?.replace_all(&text_data_0, "").to_string();
+        let text_data_0 = founded
+            .as_str()
+            .replace("<blocks>", "")
+            .replace("</blocks>", "to");
+        let text_data = regex::Regex::new(r#"^\""#)?
+            .replace_all(&text_data_0, "")
+            .to_string();
         parse_json_from_str(&text_data);
 
         Ok(())

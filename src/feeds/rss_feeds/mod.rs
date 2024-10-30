@@ -13,6 +13,7 @@ use crate::publish::Publisher;
 
 use chrono::NaiveDateTime;
 use getset::{CopyGetters, Getters};
+use regex::Regex;
 use reqwest::Url;
 use reqwest_middleware::ClientBuilder;
 use reqwest_retry::policies::ExponentialBackoff;
@@ -20,7 +21,6 @@ use reqwest_retry::RetryTransientMiddleware;
 use std::str::FromStr;
 use std::sync::Arc;
 use std::time::Duration;
-use regex::Regex;
 use tokio::time;
 
 #[derive(Getters, CopyGetters)]
@@ -172,8 +172,7 @@ where
                 #[cfg(feature = "crawler-llm")]
                 let data = &source.clone().unwrap_or(link.to_string());
 
-                self
-                    .crawler()
+                self.crawler()
                     .scrape(data)
                     .await
                     .map_err(|err| anyhow::Error::msg(err.to_string()))?
