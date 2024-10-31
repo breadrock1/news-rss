@@ -6,7 +6,10 @@ use serde::Deserialize;
 #[getset(get_copy = "pub")]
 pub struct RssConfig {
     #[getset(skip)]
-    #[getset(get = "pub", set = "pub")]
+    #[getset(get = "pub")]
+    source_name: String,
+    #[getset(skip)]
+    #[getset(get = "pub")]
     target_url: String,
     max_retries: u32,
     timeout: u64,

@@ -8,14 +8,33 @@ use crate::cache::CacheService;
 use crate::crawler::CrawlerService;
 use crate::publish::Publisher;
 
-use axum::routing::post;
+use axum::routing::{get, post};
 use axum::Router;
+use getset::Getters;
 use std::collections::HashMap;
 use std::sync::Arc;
 use tokio::sync::RwLock;
 use tokio::task::JoinHandle;
 
-type JoinableWorkers = HashMap<String, JoinHandle<Result<(), anyhow::Error>>>;
+type JoinableWorkers = HashMap<String, RssWorker>;
+
+#[derive(Getters)]
+#[getset(get = "pub")]
+pub struct RssWorker {
+    source_name: String,
+    source_url: String,
+    worker: JoinHandle<Result<(), anyhow::Error>>,
+}
+
+impl RssWorker {
+    pub fn new(name: String, url: String, worker: JoinHandle<Result<(), anyhow::Error>>) -> Self {
+        RssWorker {
+            source_name: name,
+            source_url: url,
+            worker,
+        }
+    }
+}
 
 pub struct ServerApp<P, C, S>
 where
@@ -59,6 +78,7 @@ where
     let app_arc = Arc::new(app);
     Router::new()
         .merge(swagger::init_swagger())
+        .route("/workers/all", get(routers::get_workers))
         .route("/workers/info", post(routers::get_worker_info))
         .route("/workers/create", post(routers::create_worker))
         .route("/workers/restart", post(routers::restart_worker))

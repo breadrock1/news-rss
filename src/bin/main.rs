@@ -13,12 +13,13 @@ use news_rss::crawler::native::NativeCrawler;
 use news_rss::feeds::rss_feeds::RssFeeds;
 use news_rss::feeds::FetchTopic;
 use news_rss::publish::rabbit::RabbitPublisher;
-use news_rss::server::ServerApp;
+use news_rss::server::{RssWorker, ServerApp};
 use news_rss::{logger, server, ServiceConnect};
+use reqwest::Method;
 use std::collections::HashMap;
 use std::sync::Arc;
 use tokio::net::TcpListener;
-use tower_http::trace;
+use tower_http::{cors, trace};
 
 #[tokio::main]
 async fn main() -> Result<(), anyhow::Error> {
@@ -40,42 +41,38 @@ async fn main() -> Result<(), anyhow::Error> {
     #[cfg(feature = "crawler-llm")]
     let crawler = build_llm_crawler(&config).await?;
 
-    // TODO: Implement loading workers from db
-    // let topics_config = config.topics();
-    // let rss_config = topics_config.rss();
-    //
-    // let rss_feeds = rss_config
-    //     .target_url()
-    //     .split(',')
-    //     .filter_map(|it| {
-    //         let mut rss_config = topics_config.rss();
-    //         rss_config.set_target_url(it.to_string());
-    //         RssFeeds::new(&rss_config, publish.clone(), cache.clone(), crawler.clone()).ok()
-    //     })
-    //     .map(|it| (it.get_source(), it))
-    //     .collect::<HashMap<String, RssFeeds<_, _, _>>>();
-
-    let rss_feeds: HashMap<String, RssFeeds<RabbitPublisher, LocalCache, NativeCrawler>> =
-        HashMap::default();
-
-    let rss_workers = rss_feeds
+    let rss_config = vec![config.topics().rss()];
+    let rss_workers = rss_config
         .into_iter()
-        .map(|it| {
-            let source = it.0;
-            let worker = it.1;
-            let task = tokio::spawn(async move { worker.launch_fetching().await });
-            (source, task)
+        .filter_map(|it| {
+            RssFeeds::new(it, publish.clone(), cache.clone(), crawler.clone()).ok()
         })
-        .collect::<HashMap<String, _>>();
+        .map(|it| {
+            let config = it.config();
+
+            let name = config.source_name();
+            let url = config.target_url();
+            let it_cln = it.clone();
+            let worker = tokio::spawn(async move { it_cln.launch_fetching().await });
+
+            let rss_worker = RssWorker::new(name.to_owned(), url.to_owned(), worker);
+            (url.to_owned(), rss_worker)
+        })
+        .collect::<HashMap<String, RssWorker>>();
 
     let listener = TcpListener::bind(config.server().address()).await?;
-    let server_app = ServerApp::new(rss_workers, publish.clone(), cache.clone(), crawler.clone());
-
+    let server_app = ServerApp::new(rss_workers, publish, cache, crawler);
     let trace_layer = trace::TraceLayer::new_for_http()
         .make_span_with(trace::DefaultMakeSpan::new().level(tracing::Level::INFO))
         .on_response(trace::DefaultOnResponse::new().level(tracing::Level::INFO));
 
-    let app = server::init_server(server_app).layer(trace_layer);
+    let cors_layer = cors::CorsLayer::new()
+        .allow_methods([Method::GET, Method::POST])
+        .allow_origin(cors::Any);
+
+    let app = server::init_server(server_app)
+        .layer(trace_layer)
+        .layer(cors_layer);
 
     axum::serve(listener, app).await?;
 

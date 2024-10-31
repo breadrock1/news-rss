@@ -31,7 +31,7 @@ impl From<RssResponse> for PublishNews {
         PublishNews::builder()
             .id(response.guid().to_owned())
             .source(response.source().to_owned())
-            .datetime(response.pub_date().to_owned())
+            .date(response.pub_date().to_owned())
             .photo_path(response.photo_path().to_owned())
             .text(response.content().to_owned())
             .message_url(response.link().to_owned())

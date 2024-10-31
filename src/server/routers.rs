@@ -12,12 +12,66 @@ use crate::server::forms::GetInfoForm;
 use crate::server::forms::GetInfoResponse;
 use crate::server::forms::TerminateWorkerForm;
 use crate::server::swagger::SwaggerExamples;
-use crate::server::ServerApp;
+use crate::server::{RssWorker, ServerApp};
 
 use axum::extract::State;
 use axum::response::IntoResponse;
 use axum::Json;
 use std::sync::Arc;
+
+#[utoipa::path(
+    get,
+    path = "/workers/all",
+    tag = "workers",
+    responses(
+        (
+            status = 200,
+            description = "Successful",
+            body = Vec<GetInfoResponse>,
+            example = json!(vec![GetInfoResponse::example(None)]),
+        ),
+        (
+            status = 400,
+            description = "Failed to get all workers info",
+            body = ServerError,
+            example = json!(ServerError::example(Some("failed to get all workers info".to_string()))),
+        ),
+        (
+            status = 503,
+            description = "Server does not available",
+            body = ServerError,
+            example = json!(ServerError::example(None)),
+        ),
+    )
+)]
+pub async fn get_workers<P, C, S>(
+    State(state): State<Arc<ServerApp<P, C, S>>>,
+) -> ServerResult<impl IntoResponse>
+where
+    P: Publisher + Sync + Send,
+    C: CacheService + Sync + Send,
+    S: CrawlerService + Sync + Send,
+{
+    let workers = state.workers();
+    let workers_guard = workers.read().await;
+
+    let response = workers_guard
+        .values()
+        .map(|worker| {
+            let is_launched = !worker.worker().is_finished();
+            let response = GetInfoResponse::builder()
+                .source_name(worker.source_name().to_owned())
+                .source_url(worker.source_url().to_owned())
+                .is_launched(is_launched)
+                .build()
+                .unwrap();
+
+            response
+        })
+        .collect::<Vec<GetInfoResponse>>();
+
+    Ok(Json(response))
+}
 
 #[utoipa::path(
     post,
@@ -68,7 +122,7 @@ where
         return Err(ServerError::NotFound(msg));
     };
 
-    let is_launched = !worker.is_finished();
+    let is_launched = !worker.worker().is_finished();
     let response = GetInfoResponse::builder()
         .source_name(form.source_name().to_owned())
         .source_url(form.source_url().to_owned())
@@ -123,7 +177,7 @@ where
     let worker_name = form.target_url();
     if let Some(worker) = workers_guard.get(worker_name) {
         tracing::info!("worker {worker_name} already exists");
-        if !worker.is_finished() && !form.create_force() {
+        if !worker.worker().is_finished() && !form.create_force() {
             let msg = format!("worker {worker_name} already launched");
             return Err(ServerError::AlreadyLaunched(msg));
         }
@@ -133,10 +187,14 @@ where
     let cache = state.cache.clone();
     let crawler = state.crawler.clone();
     let publish = state.publish.clone();
-    let feeds = RssFeeds::new(&config, publish, cache, crawler).unwrap();
+    let feeds = RssFeeds::new(config, publish, cache, crawler).unwrap();
 
     let task = tokio::spawn(async move { feeds.launch_fetching().await });
-    workers_guard.insert(worker_name.to_owned(), task);
+
+    let source = form.source_name().to_owned();
+    let target = form.target_url().to_owned();
+    let rss_worker = RssWorker::new(source, target, task);
+    workers_guard.insert(worker_name.to_owned(), rss_worker);
 
     Ok(Json(Success::default()))
 }
@@ -189,16 +247,20 @@ where
         return Err(ServerError::NotFound(msg));
     };
 
-    worker.abort();
+    worker.worker().abort();
 
     let config = RssConfig::from(&form);
     let cache = state.cache.clone();
     let crawler = state.crawler.clone();
     let publish = state.publish.clone();
-    let feeds = RssFeeds::new(&config, publish, cache, crawler).unwrap();
+    let feeds = RssFeeds::new(config, publish, cache, crawler).unwrap();
 
     let task = tokio::spawn(async move { feeds.launch_fetching().await });
-    workers_guard.insert(worker_name.to_owned(), task);
+
+    let source = form.source_name().to_owned();
+    let target = form.target_url().to_owned();
+    let rss_worker = RssWorker::new(source, target, task);
+    workers_guard.insert(worker_name.to_owned(), rss_worker);
 
     Ok(Json(Success::default()))
 }
@@ -251,6 +313,6 @@ where
         return Err(ServerError::NotFound(msg));
     };
 
-    worker.abort();
+    worker.worker().abort();
     Ok(Json(Success::default()))
 }

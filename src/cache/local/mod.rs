@@ -10,6 +10,7 @@ use moka::future::Cache;
 use std::sync::Arc;
 use std::time::Duration;
 
+#[derive(Clone)]
 pub struct LocalCache {
     config: Arc<LocalCacheConfig>,
     client: Cache<String, PublishNews>,

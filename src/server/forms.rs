@@ -6,6 +6,7 @@ use getset::{CopyGetters, Getters};
 use serde::{Deserialize, Serialize};
 use utoipa::{IntoParams, ToSchema};
 
+const EXAMPLE_SOURCE_NAME: &str = "BBC";
 const EXAMPLE_TARGET_URL: &str = "https://bbc-news.com/rss.xml";
 
 #[derive(Deserialize, Serialize, Getters, IntoParams, ToSchema)]
@@ -50,6 +51,11 @@ impl SwaggerExamples for TerminateWorkerForm {
 pub struct CreateWorkerForm {
     #[getset(skip)]
     #[getset(get = "pub")]
+    #[schema(example = "BBC")]
+    source_name: String,
+
+    #[getset(skip)]
+    #[getset(get = "pub")]
     #[schema(example = "https://bbc-news.com/rss.xml")]
     target_url: String,
 
@@ -83,6 +89,7 @@ impl SwaggerExamples for CreateWorkerForm {
 
     fn example(_value: Option<String>) -> Self::Example {
         CreateWorkerForm {
+            source_name: EXAMPLE_SOURCE_NAME.to_string(),
             target_url: EXAMPLE_TARGET_URL.to_string(),
             max_retries: 3,
             timeout: 300,

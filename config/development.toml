@@ -36,6 +36,7 @@ base_url = "http://localhost:8081/v1"
 max_retries = 3
 timeout = 100
 interval_secs = 3600
+source_name = "NDTV Worlds News"
 target_url = "https://feeds.feedburner.com/ndtvnews-world-news"
 
 # Available rss news sources:

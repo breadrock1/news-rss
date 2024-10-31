@@ -9,6 +9,8 @@ publish-offline = ["dep:sqlx"]
 crawler-llm = ["dep:openai_dive", "dep:html2text"]
 default = []
 
+test-publish-rabbit = []
+
 [dependencies]
 anyhow = "^1.0"
 async-trait = "^0.1"
@@ -72,7 +74,7 @@ features = ["full"]
 
 [dependencies.tower-http]
 version = "^0.6"
-features = ["trace"]
+features = ["trace", "cors"]
 
 [dependencies.utoipa]
 version = "^5.1"

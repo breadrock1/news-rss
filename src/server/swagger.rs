@@ -24,6 +24,7 @@ pub fn init_swagger() -> SwaggerUi {
         ),
     ),
     paths(
+        get_workers,
         get_worker_info,
         create_worker,
         restart_worker,

@@ -5,7 +5,9 @@ use mocks::mock_rmq_publish::MockRabbitPublisher;
 use news_rss::config::ServiceConfig;
 use news_rss::feeds::rss_feeds::RssFeeds;
 use news_rss::feeds::FetchTopic;
+use news_rss::server::RssWorker;
 use news_rss::{logger, ServiceConnect};
+use std::collections::HashMap;
 use std::sync::Arc;
 use std::time::Duration;
 
@@ -32,25 +34,27 @@ async fn test_rss_feeds() -> Result<(), anyhow::Error> {
     #[cfg(feature = "crawler-llm")]
     let crawler = tests_helper::build_llm_crawler(&config).await?;
 
-    let topics_config = config.topics();
-    let rss_config = topics_config.rss();
-
-    let rss_feeds = rss_config
-        .target_url()
-        .split(',')
-        .filter_map(|it| {
-            let mut rss_config = topics_config.rss();
-            rss_config.set_target_url(it.to_string());
-            RssFeeds::new(&rss_config, publish.clone(), cache.clone(), crawler.clone()).ok()
-        })
-        .collect::<Vec<RssFeeds<_, _, _>>>();
-
-    let _ = rss_feeds
+    let rss_config = vec![config.topics().rss()];
+    let _ = rss_config
         .into_iter()
-        .map(|it| tokio::spawn(async move { it.launch_fetching().await }))
-        .collect::<Vec<_>>();
+        .filter_map(|it| {
+            RssFeeds::new(it, publish.clone(), cache.clone(), crawler.clone()).ok()
+        })
+        .map(|it| {
+            let config = it.config();
 
-    // let _ = tests_helper::rabbit_consumer(config.publish().rmq()).await?;
+            let name = config.source_name();
+            let url = config.target_url();
+            let it_cln = it.clone();
+            let worker = tokio::spawn(async move { it_cln.launch_fetching().await });
+
+            let rss_worker = RssWorker::new(name.to_owned(), url.to_owned(), worker);
+            (url.to_owned(), rss_worker)
+        })
+        .collect::<HashMap<String, RssWorker>>();
+
+    #[cfg(feature = "test-publish-rabbit")]
+    let _ = tests_helper::rabbit_consumer(config.publish().rmq()).await?;
 
     tokio::time::sleep(Duration::from_secs(TEST_TIME_EXECUTION)).await;
 

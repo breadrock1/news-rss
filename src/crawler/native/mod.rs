@@ -2,7 +2,7 @@ use crate::crawler::CrawlerService;
 
 use regex::Regex;
 
-#[derive(Default)]
+#[derive(Clone, Default)]
 pub struct NativeCrawler;
 
 #[async_trait::async_trait]

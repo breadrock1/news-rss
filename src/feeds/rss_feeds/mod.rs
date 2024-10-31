@@ -23,7 +23,7 @@ use std::sync::Arc;
 use std::time::Duration;
 use tokio::time;
 
-#[derive(Getters, CopyGetters)]
+#[derive(Clone, Getters, CopyGetters)]
 #[getset(get = "pub")]
 pub struct RssFeeds<P, C, S>
 where
@@ -103,7 +103,7 @@ where
     S: CrawlerService + Sync,
 {
     pub fn new(
-        config: &RssConfig,
+        config: RssConfig,
         publish: Arc<P>,
         cache: Arc<C>,
         crawler: Arc<S>,
