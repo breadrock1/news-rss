@@ -40,19 +40,23 @@ async fn main() -> Result<(), anyhow::Error> {
     #[cfg(feature = "crawler-llm")]
     let crawler = build_llm_crawler(&config).await?;
 
-    let topics_config = config.topics();
-    let rss_config = topics_config.rss();
+    // TODO: Implement loading workers from db
+    // let topics_config = config.topics();
+    // let rss_config = topics_config.rss();
+    //
+    // let rss_feeds = rss_config
+    //     .target_url()
+    //     .split(',')
+    //     .filter_map(|it| {
+    //         let mut rss_config = topics_config.rss();
+    //         rss_config.set_target_url(it.to_string());
+    //         RssFeeds::new(&rss_config, publish.clone(), cache.clone(), crawler.clone()).ok()
+    //     })
+    //     .map(|it| (it.get_source(), it))
+    //     .collect::<HashMap<String, RssFeeds<_, _, _>>>();
 
-    let rss_feeds = rss_config
-        .target_url()
-        .split(',')
-        .filter_map(|it| {
-            let mut rss_config = topics_config.rss();
-            rss_config.set_target_url(it.to_string());
-            RssFeeds::new(&rss_config, publish.clone(), cache.clone(), crawler.clone()).ok()
-        })
-        .map(|it| (it.get_source(), it))
-        .collect::<HashMap<String, RssFeeds<_, _, _>>>();
+    let rss_feeds: HashMap<String, RssFeeds<RabbitPublisher, LocalCache, NativeCrawler>> =
+        HashMap::default();
 
     let rss_workers = rss_feeds
         .into_iter()

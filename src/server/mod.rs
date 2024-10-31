@@ -2,12 +2,13 @@ pub mod config;
 mod errors;
 mod forms;
 mod routers;
+mod swagger;
 
 use crate::cache::CacheService;
 use crate::crawler::CrawlerService;
 use crate::publish::Publisher;
 
-use axum::routing::{delete, post};
+use axum::routing::post;
 use axum::Router;
 use std::collections::HashMap;
 use std::sync::Arc;
@@ -57,9 +58,10 @@ where
 {
     let app_arc = Arc::new(app);
     Router::new()
-        .route("/sources/info", post(routers::get_worker_info))
-        .route("/sources/delete", delete(routers::create_worker))
-        .route("/workers/launch", post(routers::restart_worker))
+        .merge(swagger::init_swagger())
+        .route("/workers/info", post(routers::get_worker_info))
+        .route("/workers/create", post(routers::create_worker))
+        .route("/workers/restart", post(routers::restart_worker))
         .route("/workers/terminate", post(routers::terminate_worker))
         .with_state(app_arc)
 }

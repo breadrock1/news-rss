@@ -1,19 +1,27 @@
-use axum::{
-    response::{IntoResponse, Response},
-    Json,
-};
+use crate::server::swagger::SwaggerExamples;
+
+use axum::response::{IntoResponse, Response};
+use axum::Json;
 use reqwest::StatusCode;
 use serde::Serialize;
 use thiserror::Error;
+use utoipa::ToSchema;
 
 pub type ServerResult<T> = Result<T, ServerError>;
 
-#[derive(Debug, Error, Serialize)]
+#[derive(Debug, Error, Serialize, ToSchema)]
 pub enum ServerError {
     #[error("not found error: {0}")]
     NotFound(String),
+    
     #[error("worker {0} already launched")]
     AlreadyLaunched(String),
+    
+    #[error("internal service error: {0}")]
+    InternalError(String),
+    
+    #[error("service unavailable")]
+    ServiceUnavailable,
 }
 
 #[derive(Serialize)]
@@ -35,7 +43,18 @@ impl IntoResponse for ServerError {
     }
 }
 
-#[derive(Serialize)]
+impl SwaggerExamples for ServerError {
+    type Example = Self;
+
+    fn example(value: Option<String>) -> Self::Example {
+        match value {
+            None => ServerError::ServiceUnavailable,
+            Some(msg) => ServerError::InternalError(msg),
+        }
+    }
+}
+
+#[derive(Serialize, ToSchema)]
 pub struct Success {
     status: u16,
     message: String,
@@ -47,5 +66,13 @@ impl Default for Success {
             status: 200,
             message: "Ok".to_string(),
         }
+    }
+}
+
+impl SwaggerExamples for Success {
+    type Example = Self;
+
+    fn example(_value: Option<String>) -> Self::Example {
+        Success::default()
     }
 }

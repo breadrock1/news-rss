@@ -73,6 +73,14 @@ features = ["full"]
 version = "^0.6"
 features = ["trace"]
 
+[dependencies.utoipa]
+version = "^5.1"
+features = ["axum_extras", "chrono"]
+
+[dependencies.utoipa-swagger-ui]
+version = "^8.0"
+features = ["axum"]
+
 [dev-dependencies]
 lazy_static = "^1.5"
 wiremock = "^0.6"

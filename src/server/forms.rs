@@ -1,31 +1,68 @@
 use crate::feeds::rss_feeds::config::RssConfig;
+use crate::server::swagger::SwaggerExamples;
 
 use derive_builder::Builder;
 use getset::{CopyGetters, Getters};
 use serde::{Deserialize, Serialize};
+use utoipa::{IntoParams, ToSchema};
 
-#[derive(Deserialize, Getters)]
+const EXAMPLE_TARGET_URL: &str = "https://bbc-news.com/rss.xml";
+
+#[derive(Deserialize, Serialize, Getters, IntoParams, ToSchema)]
 #[getset(get = "pub")]
 pub struct GetInfoForm {
+    #[schema(example = "https://bbc-news.com/rss.xml")]
     source_url: String,
+    #[schema(example = "BBC")]
     source_name: String,
 }
 
-#[derive(Deserialize, Getters)]
+impl SwaggerExamples for GetInfoForm {
+    type Example = Self;
+
+    fn example(_value: Option<String>) -> Self::Example {
+        GetInfoForm {
+            source_url: EXAMPLE_TARGET_URL.to_string(),
+            source_name: "BBC".to_string(),
+        }
+    }
+}
+
+#[derive(Deserialize, Serialize, Getters, IntoParams, ToSchema)]
 #[getset(get = "pub")]
-pub struct TerminateForm {
+pub struct TerminateWorkerForm {
+    #[schema(example = "https://bbc-news.com/rss.xml")]
     source_url: String,
 }
 
-#[derive(Deserialize, Getters, CopyGetters)]
+impl SwaggerExamples for TerminateWorkerForm {
+    type Example = Self;
+
+    fn example(_value: Option<String>) -> Self::Example {
+        TerminateWorkerForm {
+            source_url: EXAMPLE_TARGET_URL.to_string(),
+        }
+    }
+}
+
+#[derive(Deserialize, Serialize, Getters, CopyGetters, IntoParams, ToSchema)]
 #[getset(get_copy = "pub")]
 pub struct CreateWorkerForm {
     #[getset(skip)]
     #[getset(get = "pub")]
+    #[schema(example = "https://bbc-news.com/rss.xml")]
     target_url: String,
+
+    #[schema(example = 3)]
     max_retries: u32,
+
+    #[schema(example = 100)]
     timeout: u64,
+
+    #[schema(example = 300)]
     interval_secs: u64,
+
+    #[schema(example = false)]
     create_force: bool,
 }
 
@@ -41,15 +78,46 @@ impl From<&CreateWorkerForm> for RssConfig {
     }
 }
 
-#[derive(Builder, Serialize)]
+impl SwaggerExamples for CreateWorkerForm {
+    type Example = Self;
+
+    fn example(_value: Option<String>) -> Self::Example {
+        CreateWorkerForm {
+            target_url: EXAMPLE_TARGET_URL.to_string(),
+            max_retries: 3,
+            timeout: 300,
+            interval_secs: 300,
+            create_force: true,
+        }
+    }
+}
+
+#[derive(Builder, Serialize, IntoParams, ToSchema)]
 pub struct GetInfoResponse {
+    #[schema(example = "https://bbc-news.com/rss.xml")]
     source_url: String,
+
+    #[schema(example = "BBC")]
     source_name: String,
+
+    #[schema(example = false)]
     is_launched: bool,
 }
 
 impl GetInfoResponse {
     pub fn builder() -> GetInfoResponseBuilder {
         GetInfoResponseBuilder::default()
+    }
+}
+
+impl SwaggerExamples for GetInfoResponse {
+    type Example = Self;
+
+    fn example(_value: Option<String>) -> Self::Example {
+        GetInfoResponse {
+            source_url: "https://bbc-news.com/rss.xml".to_string(),
+            source_name: "BBC".to_string(),
+            is_launched: false,
+        }
     }
 }

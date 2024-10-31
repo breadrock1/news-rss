@@ -10,7 +10,8 @@ use crate::server::errors::Success;
 use crate::server::forms::CreateWorkerForm;
 use crate::server::forms::GetInfoForm;
 use crate::server::forms::GetInfoResponse;
-use crate::server::forms::TerminateForm;
+use crate::server::forms::TerminateWorkerForm;
+use crate::server::swagger::SwaggerExamples;
 use crate::server::ServerApp;
 
 use axum::extract::State;
@@ -18,6 +19,35 @@ use axum::response::IntoResponse;
 use axum::Json;
 use std::sync::Arc;
 
+#[utoipa::path(
+    post,
+    path = "/workers/info",
+    tag = "workers",
+    request_body(
+        content = GetInfoForm,
+        example = json!(GetInfoForm::example(None)),
+    ),
+    responses(
+        (
+            status = 200,
+            description = "Successful",
+            body = GetInfoResponse,
+            example = json!(GetInfoResponse::example(None)),
+        ),
+        (
+            status = 400,
+            description = "Failed to get worker info",
+            body = ServerError,
+            example = json!(ServerError::example(Some("failed to get worker info".to_string()))),
+        ),
+        (
+            status = 503,
+            description = "Server does not available",
+            body = ServerError,
+            example = json!(ServerError::example(None)),
+        ),
+    )
+)]
 pub async fn get_worker_info<P, C, S>(
     State(state): State<Arc<ServerApp<P, C, S>>>,
     Json(form): Json<GetInfoForm>,
@@ -49,6 +79,35 @@ where
     Ok(Json(response))
 }
 
+#[utoipa::path(
+    post,
+    path = "/workers/create",
+    tag = "workers",
+    request_body(
+        content = CreateWorkerForm,
+        example = json!(CreateWorkerForm::example(None)),
+    ),
+    responses(
+        (
+            status = 200,
+            description = "Successful",
+            body = Success,
+            example = json!(Success::example(None)),
+        ),
+        (
+            status = 400,
+            description = "Failed to create worker",
+            body = ServerError,
+            example = json!(ServerError::example(Some("failed to create worker".to_string()))),
+        ),
+        (
+            status = 503,
+            description = "Server does not available",
+            body = ServerError,
+            example = json!(ServerError::example(None)),
+        ),
+    )
+)]
 pub async fn create_worker<P, C, S>(
     State(state): State<Arc<ServerApp<P, C, S>>>,
     Json(form): Json<CreateWorkerForm>,
@@ -82,6 +141,35 @@ where
     Ok(Json(Success::default()))
 }
 
+#[utoipa::path(
+    post,
+    path = "/workers/restart",
+    tag = "workers",
+    request_body(
+        content = CreateWorkerForm,
+        example = json!(CreateWorkerForm::example(None)),
+    ),
+    responses(
+        (
+            status = 200,
+            description = "Successful",
+            body = Success,
+            example = json!(Success::example(None)),
+        ),
+        (
+            status = 400,
+            description = "Failed to restart worker",
+            body = ServerError,
+            example = json!(ServerError::example(Some("failed to restart worker".to_string()))),
+        ),
+        (
+            status = 503,
+            description = "Server does not available",
+            body = ServerError,
+            example = json!(ServerError::example(None)),
+        ),
+    )
+)]
 pub async fn restart_worker<P, C, S>(
     State(state): State<Arc<ServerApp<P, C, S>>>,
     Json(form): Json<CreateWorkerForm>,
@@ -115,9 +203,38 @@ where
     Ok(Json(Success::default()))
 }
 
+#[utoipa::path(
+    post,
+    path = "/workers/terminate",
+    tag = "workers",
+    request_body(
+        content = TerminateWorkerForm,
+        example = json!(TerminateWorkerForm::example(None)),
+    ),
+    responses(
+        (
+            status = 200,
+            description = "Successful",
+            body = Success,
+            example = json!(Success::example(None)),
+        ),
+        (
+            status = 400,
+            description = "Failed to terminate worker",
+            body = ServerError,
+            example = json!(ServerError::example(Some("failed to terminate worker".to_string()))),
+        ),
+        (
+            status = 503,
+            description = "Server does not available",
+            body = ServerError,
+            example = json!(ServerError::example(None)),
+        ),
+    )
+)]
 pub async fn terminate_worker<P, C, S>(
     State(state): State<Arc<ServerApp<P, C, S>>>,
-    Json(form): Json<TerminateForm>,
+    Json(form): Json<TerminateWorkerForm>,
 ) -> ServerResult<impl IntoResponse>
 where
     P: Publisher + Sync + Send,
