@@ -1071,6 +1071,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "escape_string"
+version = "0.1.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "59e867569975c88fdf73833a30bd6e0978aa6ab6bd784b648fcece07450951ba"
+
+[[package]]
 name = "etcetera"
 version = "0.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2031,6 +2037,7 @@ dependencies = [
  "config",
  "console-subscriber",
  "derive_builder",
+ "escape_string",
  "getset",
  "html2text",
  "lapin",

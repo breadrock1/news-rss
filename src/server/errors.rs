@@ -13,13 +13,13 @@ pub type ServerResult<T> = Result<T, ServerError>;
 pub enum ServerError {
     #[error("not found error: {0}")]
     NotFound(String),
-    
+
     #[error("worker {0} already launched")]
     AlreadyLaunched(String),
-    
+
     #[error("internal service error: {0}")]
     InternalError(String),
-    
+
     #[error("service unavailable")]
     ServiceUnavailable,
 }
