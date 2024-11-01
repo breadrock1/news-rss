@@ -14,8 +14,8 @@ pub enum ServerError {
     #[error("not found error: {0}")]
     NotFound(String),
 
-    #[error("worker {0} already launched")]
-    AlreadyLaunched(String),
+    #[error("worker {0} is launched")]
+    Launched(String),
 
     #[error("internal service error: {0}")]
     InternalError(String),
@@ -24,20 +24,30 @@ pub enum ServerError {
     ServiceUnavailable,
 }
 
-#[derive(Serialize)]
-pub struct ErrorResponse {
-    message: String,
+impl ServerError {
+    pub fn status_code(&self) -> (&str, StatusCode) {
+        match self {
+            ServerError::NotFound(msg) => (msg, StatusCode::NOT_FOUND),
+            ServerError::Launched(msg) => (msg, StatusCode::CONFLICT),
+            ServerError::InternalError(msg) => (msg, StatusCode::INTERNAL_SERVER_ERROR),
+            ServerError::ServiceUnavailable => ("service unavailable", StatusCode::SERVICE_UNAVAILABLE),
+            _ => ("runtime error", StatusCode::INTERNAL_SERVER_ERROR),
+        }
+    }
 }
 
 impl IntoResponse for ServerError {
     fn into_response(self) -> Response {
-        let status = StatusCode::INTERNAL_SERVER_ERROR;
-        let message = match self {
-            ServerError::NotFound(msg) => msg,
-            _ => "runtime error".to_string(),
-        };
+        #[derive(Serialize)]
+        struct ErrorResponse {
+            message: String,
+        }
 
-        let mut resp = Json(ErrorResponse { message }).into_response();
+        let (msg, status) = self.status_code();
+        let mut resp = Json(ErrorResponse { 
+            message: msg.to_string(),
+         }).into_response();
+        
         *resp.status_mut() = status;
         resp
     }
