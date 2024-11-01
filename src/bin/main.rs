@@ -15,7 +15,6 @@ use news_rss::feeds::FetchTopic;
 use news_rss::publish::rabbit::RabbitPublisher;
 use news_rss::server::{RssWorker, ServerApp};
 use news_rss::{logger, server, ServiceConnect};
-use reqwest::Method;
 use std::collections::HashMap;
 use std::sync::Arc;
 use tokio::net::TcpListener;
@@ -66,9 +65,7 @@ async fn main() -> Result<(), anyhow::Error> {
         .make_span_with(trace::DefaultMakeSpan::new().level(tracing::Level::INFO))
         .on_response(trace::DefaultOnResponse::new().level(tracing::Level::INFO));
 
-    let cors_layer = cors::CorsLayer::new()
-        .allow_methods([Method::GET, Method::POST])
-        .allow_origin(cors::Any);
+    let cors_layer = cors::CorsLayer::permissive();
 
     let app = server::init_server(server_app)
         .layer(trace_layer)
