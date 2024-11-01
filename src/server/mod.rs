@@ -8,7 +8,7 @@ use crate::cache::CacheService;
 use crate::crawler::CrawlerService;
 use crate::publish::Publisher;
 
-use axum::routing::{get, post};
+use axum::routing::{delete, get, post, put};
 use axum::Router;
 use getset::Getters;
 use std::collections::HashMap;
@@ -80,8 +80,9 @@ where
         .merge(swagger::init_swagger())
         .route("/workers/all", get(routers::get_workers))
         .route("/workers/info", post(routers::get_worker_info))
-        .route("/workers/create", post(routers::create_worker))
+        .route("/workers/create", put(routers::create_worker))
         .route("/workers/restart", post(routers::restart_worker))
+        .route("/workers/delete", delete(routers::delete_worker))
         .route("/workers/terminate", post(routers::terminate_worker))
         .with_state(app_arc)
 }

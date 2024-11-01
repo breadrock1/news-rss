@@ -29,12 +29,14 @@ pub fn init_swagger() -> SwaggerUi {
         create_worker,
         restart_worker,
         terminate_worker,
+        delete_worker,
     ),
     components(
         schemas(
             GetInfoForm,
             GetInfoResponse,
             CreateWorkerForm,
+            DeleteWorkerForm,
             TerminateWorkerForm,
         ),
     ),

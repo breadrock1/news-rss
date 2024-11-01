@@ -19,6 +19,8 @@ use axum::response::IntoResponse;
 use axum::Json;
 use std::sync::Arc;
 
+use super::forms::DeleteWorkerForm;
+
 #[utoipa::path(
     get,
     path = "/workers/all",
@@ -134,7 +136,7 @@ where
 }
 
 #[utoipa::path(
-    post,
+    put,
     path = "/workers/create",
     tag = "workers",
     request_body(
@@ -179,7 +181,7 @@ where
         tracing::info!("worker {worker_name} already exists");
         if !worker.worker().is_finished() && !form.create_force() {
             let msg = format!("worker {worker_name} already launched");
-            return Err(ServerError::AlreadyLaunched(msg));
+            return Err(ServerError::Launched(msg));
         }
     }
 
@@ -315,4 +317,68 @@ where
 
     worker.worker().abort();
     Ok(Json(Success::default()))
+}
+
+#[utoipa::path(
+    delete,
+    path = "/workers/delete",
+    tag = "workers",
+    request_body(
+        content = DeleteWorkerForm,
+        example = json!(DeleteWorkerForm::example(None)),
+    ),
+    responses(
+        (
+            status = 200,
+            description = "Successful",
+            body = Success,
+            example = json!(Success::example(None)),
+        ),
+        (
+            status = 400,
+            description = "Failed to delete worker",
+            body = ServerError,
+            example = json!(ServerError::example(Some("failed to delete worker".to_string()))),
+        ),
+        (
+            status = 503,
+            description = "Server does not available",
+            body = ServerError,
+            example = json!(ServerError::example(None)),
+        ),
+    )
+)]
+pub async fn delete_worker<P, C, S>(
+    State(state): State<Arc<ServerApp<P, C, S>>>,
+    Json(form): Json<DeleteWorkerForm>,
+) -> ServerResult<impl IntoResponse>
+where
+    P: Publisher + Sync + Send,
+    C: CacheService + Sync + Send,
+    S: CrawlerService + Sync + Send,
+{
+    let workers = state.workers();
+    let mut workers_guard = workers.write().await;
+
+    let worker_name = form.target_url();
+    let Some(worker) = workers_guard.get(worker_name) else {
+        let msg = format!("worker {worker_name} does not exist");
+        tracing::warn!("{}", &msg);
+        return Err(ServerError::NotFound(msg));
+    };
+
+    if worker.worker().is_finished() {
+        let _ = workers_guard.remove(worker_name);
+        return Ok(Json(Success::default()));
+    }
+
+    if form.is_force() {
+        worker.worker().abort();
+        let _ = workers_guard.remove(worker_name);
+        return Ok(Json(Success::default()));
+    }
+
+    let msg = format!("worker {worker_name} is launched. Use force flag to terminate");
+    tracing::warn!("{}", &msg);
+    Err(ServerError::Launched(msg))
 }

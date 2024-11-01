@@ -47,6 +47,29 @@ impl SwaggerExamples for TerminateWorkerForm {
 }
 
 #[derive(Deserialize, Serialize, Getters, CopyGetters, IntoParams, ToSchema)]
+#[getset(get = "pub")]
+pub struct DeleteWorkerForm {
+    #[schema(example = "https://bbc-news.com/rss.xml")]
+    target_url: String,
+    
+    #[getset(skip)]
+    #[getset(get_copy = "pub")]
+    #[schema(example = false)]
+    is_force: bool,
+}
+
+impl SwaggerExamples for DeleteWorkerForm {
+    type Example = Self;
+
+    fn example(_value: Option<String>) -> Self::Example {
+        DeleteWorkerForm {
+            target_url: EXAMPLE_TARGET_URL.to_string(),
+            is_force: false,
+        }
+    }
+}
+
+#[derive(Deserialize, Serialize, Getters, CopyGetters, IntoParams, ToSchema)]
 #[getset(get_copy = "pub")]
 pub struct CreateWorkerForm {
     #[getset(skip)]
@@ -75,6 +98,7 @@ pub struct CreateWorkerForm {
 impl From<&CreateWorkerForm> for RssConfig {
     fn from(form: &CreateWorkerForm) -> Self {
         RssConfig::builder()
+            .source_name(form.source_name.to_owned())
             .target_url(form.target_url.to_owned())
             .max_retries(form.max_retries)
             .timeout(form.timeout)
