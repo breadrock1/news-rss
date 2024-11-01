@@ -37,9 +37,7 @@ async fn test_rss_feeds() -> Result<(), anyhow::Error> {
     let rss_config = vec![config.topics().rss()];
     let _ = rss_config
         .into_iter()
-        .filter_map(|it| {
-            RssFeeds::new(it, publish.clone(), cache.clone(), crawler.clone()).ok()
-        })
+        .filter_map(|it| RssFeeds::new(it, publish.clone(), cache.clone(), crawler.clone()).ok())
         .map(|it| {
             let config = it.config();
 

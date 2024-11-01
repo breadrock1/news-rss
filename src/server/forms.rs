@@ -51,7 +51,7 @@ impl SwaggerExamples for TerminateWorkerForm {
 pub struct DeleteWorkerForm {
     #[schema(example = "https://bbc-news.com/rss.xml")]
     target_url: String,
-    
+
     #[getset(skip)]
     #[getset(get_copy = "pub")]
     #[schema(example = false)]

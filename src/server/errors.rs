@@ -30,8 +30,9 @@ impl ServerError {
             ServerError::NotFound(msg) => (msg, StatusCode::NOT_FOUND),
             ServerError::Launched(msg) => (msg, StatusCode::CONFLICT),
             ServerError::InternalError(msg) => (msg, StatusCode::INTERNAL_SERVER_ERROR),
-            ServerError::ServiceUnavailable => ("service unavailable", StatusCode::SERVICE_UNAVAILABLE),
-            _ => ("runtime error", StatusCode::INTERNAL_SERVER_ERROR),
+            ServerError::ServiceUnavailable => {
+                ("service unavailable", StatusCode::SERVICE_UNAVAILABLE)
+            }
         }
     }
 }
@@ -44,10 +45,11 @@ impl IntoResponse for ServerError {
         }
 
         let (msg, status) = self.status_code();
-        let mut resp = Json(ErrorResponse { 
+        let mut resp = Json(ErrorResponse {
             message: msg.to_string(),
-         }).into_response();
-        
+        })
+        .into_response();
+
         *resp.status_mut() = status;
         resp
     }
