@@ -7,7 +7,7 @@
       "NDTV ",
       "World ",
       "Profit ",
-      "हिंदी ",
+      " ",
       "Sports ",
       "MOVIES ",
       "FOOD ",
