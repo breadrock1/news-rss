@@ -1,8 +1,8 @@
-pub(super) const LLM_MODEL_NAME: &'static str = "gpt-4o-2024-08-06";
-pub(super) const SYSTEM_PROMPT_NAME: &'static str = "system-prompt";
-pub(super) const USER_QUERY_NAME: &'static str = "user-query";
+pub(super) const LLM_MODEL_NAME: &str = "gpt-4o-2024-08-06";
+pub(super) const SYSTEM_PROMPT_NAME: &str = "system-prompt";
+pub(super) const USER_QUERY_NAME: &str = "user-query";
 
-pub(super) const _SCRAPE_HTML_SYSTEM_PROMPT_SUM: &'static str = r#"
+pub(super) const _SCRAPE_HTML_SYSTEM_PROMPT_SUM: &str = r#"
 Here is the URL of the webpage:
 <url>{URL}</url>
 
@@ -42,7 +42,7 @@ Please provide your output within <blocks> tags, like this:
 Remember, the output should be a complete and parsable text data in <blocks> tags, with no omissions or errors and without any sentenses before and after XML document. The XML document should semantically break down the content into relevant blocks, maintaining the original order.
 "#;
 
-pub(super) const SCRAPE_HTML_SYSTEM_PROMPT_AS_TEXT: &'static str = r#"
+pub(super) const SCRAPE_HTML_SYSTEM_PROMPT_AS_TEXT: &str = r#"
 Here is the URL of the webpage:
 <url>{URL}</url>
 
@@ -82,7 +82,7 @@ Please provide your output within <blocks> tags, like this:
 Remember, the output should be a complete and parsable text data in <blocks> tags, with no omissions or errors and without any sentenses before and after XML document. The XML document should semantically break down the content into relevant blocks, maintaining the original order.
 "#;
 
-pub(super) const _SCRAPE_HTML_SYSTEM_PROMPT_AS_XML: &'static str = r#"
+pub(super) const _SCRAPE_HTML_SYSTEM_PROMPT_AS_XML: &str = r#"
 Here is the URL of the webpage:
 <url>{URL}</url>
 
@@ -144,7 +144,7 @@ Please provide your output within <blocks> tags, like this:
 Remember, the output should be a complete, parsable XML wrapped in <blocks> tags, with no omissions or errors and without any sentenses before and after XML document. The XML document should semantically break down the content into relevant blocks, maintaining the original order.
 "#;
 
-pub(super) const _SCRAPE_HTML_SYSTEM_PROMPT_AS_JSON: &'static str = r#"
+pub(super) const _SCRAPE_HTML_SYSTEM_PROMPT_AS_JSON: &str = r#"
 Here is the URL of the webpage:
 <url>{URL}</url>
 

@@ -15,6 +15,7 @@ use std::sync::Arc;
 
 const FIND_LLM_BLOCKS_REGEX: &str = r#"<blocks>[\w\W]+?<\/blocks>"#;
 
+#[derive(Clone)]
 pub struct LlmCrawler {
     client: Arc<Client>,
 }
