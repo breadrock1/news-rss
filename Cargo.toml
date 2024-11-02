@@ -16,7 +16,6 @@ anyhow = "^1.0"
 async-trait = "^0.1"
 config = "^0.14"
 derive_builder = "^0.20"
-escape_string = "^0.1"
 getset = "^0.1"
 lapin = "^2.5"
 regex = "1.11.0"
@@ -91,3 +90,11 @@ wiremock = "^0.6"
 [[bin]]
 name = "news-rss"
 path = "src/bin/main.rs"
+
+[[test]]
+name = "test-crawler-llm"
+path = "tests/test_crawler_llm.rs"
+
+[[test]]
+name = "test-publish-feeds"
+path = "tests/test_publish_feeds.rs"

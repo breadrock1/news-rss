@@ -5,12 +5,13 @@ level = "debug"
 address = "0.0.0.0:2865"
 
 [cache.local]
-expired_secs = 10368000
+expired_secs = 360
 
 [cache.redis]
 address = "redis://localhost:6379"
 username = "redis"
 password = "redis"
+expired_secs = 360
 
 [publish.rmq]
 address = "amqp://localhost:5672"

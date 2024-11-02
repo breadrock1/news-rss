@@ -1,6 +1,7 @@
 pub mod config;
 mod errors;
 mod prompt;
+mod retriever;
 
 use crate::crawler::llm::config::LlmConfig;
 use crate::crawler::llm::errors::LlmError;
@@ -10,10 +11,7 @@ use crate::ServiceConnect;
 
 use openai_dive::v1::api::Client;
 use openai_dive::v1::resources::chat::*;
-use regex::Regex;
 use std::sync::Arc;
-
-const FIND_LLM_BLOCKS_REGEX: &str = r#"<blocks>[\w\W]+?<\/blocks>"#;
 
 #[derive(Clone)]
 pub struct LlmCrawler {
@@ -60,7 +58,14 @@ impl CrawlerService for LlmCrawler {
             return Err(err);
         };
 
-        Self::extract_semantic_blocks(&content_data.to_string())
+        let content = content_data.to_string();
+        match retriever::extract_semantic_blocks(&content) {
+            Ok(extracted) => Ok(extracted),
+            Err(err) => {
+                tracing::error!("failed to extract semantic blocks from llm: {err:#?}");
+                Ok(content)
+            }
+        }
     }
 
     async fn scrape_by_url(&self, url: &str) -> Result<String, Self::Error> {
@@ -92,19 +97,5 @@ impl LlmCrawler {
             name: Some(USER_QUERY_NAME.to_string()),
             content: ChatMessageContent::Text(query.to_string()),
         }
-    }
-
-    pub fn extract_semantic_blocks(text_data: &str) -> Result<String, anyhow::Error> {
-        let Some(founded) = Regex::new(FIND_LLM_BLOCKS_REGEX)?.find(text_data) else {
-            tracing::warn!("failed to match blocks into llm response by regex");
-            return Ok(text_data.to_string());
-        };
-
-        let founded_string = founded
-            .as_str()
-            .replace("<blocks>", "")
-            .replace("</blocks>", "");
-
-        Ok(founded_string)
     }
 }
