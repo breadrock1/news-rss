@@ -6,6 +6,7 @@ mod swagger;
 
 use crate::cache::CacheService;
 use crate::crawler::CrawlerService;
+use crate::feeds::rss_feeds::config::RssConfig;
 use crate::publish::Publisher;
 
 use axum::routing::{delete, get, post, put};
@@ -21,16 +22,14 @@ type JoinableWorkers = HashMap<String, RssWorker>;
 #[derive(Getters)]
 #[getset(get = "pub")]
 pub struct RssWorker {
-    source_name: String,
-    source_url: String,
+    config: Arc<RssConfig>,
     worker: JoinHandle<Result<(), anyhow::Error>>,
 }
 
 impl RssWorker {
-    pub fn new(name: String, url: String, worker: JoinHandle<Result<(), anyhow::Error>>) -> Self {
+    pub fn new(config: Arc<RssConfig>, worker: JoinHandle<Result<(), anyhow::Error>>) -> Self {
         RssWorker {
-            source_name: name,
-            source_url: url,
+            config,
             worker,
         }
     }

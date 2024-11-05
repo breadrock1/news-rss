@@ -70,18 +70,51 @@ impl SwaggerExamples for DeleteWorkerForm {
 }
 
 #[derive(Deserialize, Serialize, Getters, CopyGetters, IntoParams, ToSchema)]
-#[getset(get_copy = "pub")]
+#[getset(get = "pub")]
 pub struct CreateWorkerForm {
-    #[getset(skip)]
-    #[getset(get = "pub")]
     #[schema(example = "BBC")]
     source_name: String,
 
-    #[getset(skip)]
-    #[getset(get = "pub")]
     #[schema(example = "https://bbc-news.com/rss.xml")]
     target_url: String,
 
+    #[schema(example = 3)]
+    config: RssConfigForm,
+
+    #[getset(skip)]
+    #[getset(get_copy = "pub")]
+    #[schema(example = false)]
+    create_force: bool,
+}
+
+impl CreateWorkerForm {
+    pub fn to_rss_config(&self) -> RssConfig {
+        RssConfig::builder()
+            .source_name(self.source_name.to_owned())
+            .target_url(self.target_url.to_owned())
+            .max_retries(self.config.max_retries)
+            .timeout(self.config.timeout)
+            .interval_secs(self.config.interval_secs)
+            .build()
+            .unwrap()
+    }
+}
+
+impl SwaggerExamples for RssConfigForm {
+    type Example = Self;
+
+    fn example(_value: Option<String>) -> Self::Example {
+        RssConfigForm {
+            max_retries: 3,
+            timeout: 300,
+            interval_secs: 300,
+        }
+    }
+}
+
+#[derive(Clone, Deserialize, Serialize, Getters, CopyGetters, IntoParams, ToSchema)]
+#[getset(get_copy = "pub")]
+pub struct RssConfigForm {
     #[schema(example = 3)]
     max_retries: u32,
 
@@ -90,21 +123,15 @@ pub struct CreateWorkerForm {
 
     #[schema(example = 300)]
     interval_secs: u64,
-
-    #[schema(example = false)]
-    create_force: bool,
 }
 
-impl From<&CreateWorkerForm> for RssConfig {
-    fn from(form: &CreateWorkerForm) -> Self {
-        RssConfig::builder()
-            .source_name(form.source_name.to_owned())
-            .target_url(form.target_url.to_owned())
-            .max_retries(form.max_retries)
-            .timeout(form.timeout)
-            .interval_secs(form.interval_secs)
-            .build()
-            .unwrap()
+impl From<&RssConfig> for RssConfigForm {
+    fn from(value: &RssConfig) -> Self {
+        RssConfigForm {
+            max_retries: value.max_retries(),
+            timeout: value.timeout(),
+            interval_secs: value.interval_secs(),
+        }
     }
 }
 
@@ -115,9 +142,7 @@ impl SwaggerExamples for CreateWorkerForm {
         CreateWorkerForm {
             source_name: EXAMPLE_SOURCE_NAME.to_string(),
             target_url: EXAMPLE_TARGET_URL.to_string(),
-            max_retries: 3,
-            timeout: 300,
-            interval_secs: 300,
+            config: RssConfigForm::example(None),
             create_force: true,
         }
     }
@@ -133,6 +158,10 @@ pub struct GetInfoResponse {
 
     #[schema(example = false)]
     is_launched: bool,
+
+    #[schema(example = RssConfigForm)]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    configuration: Option<RssConfigForm>,
 }
 
 impl GetInfoResponse {
@@ -149,6 +178,7 @@ impl SwaggerExamples for GetInfoResponse {
             source_url: "https://bbc-news.com/rss.xml".to_string(),
             source_name: "BBC".to_string(),
             is_launched: false,
+            configuration: Some(RssConfigForm::example(None)),
         }
     }
 }

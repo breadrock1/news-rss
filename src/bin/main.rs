@@ -47,12 +47,11 @@ async fn main() -> Result<(), anyhow::Error> {
         .map(|it| {
             let config = it.config();
 
-            let name = config.source_name();
             let url = config.target_url();
             let it_cln = it.clone();
             let worker = tokio::spawn(async move { it_cln.launch_fetching().await });
 
-            let rss_worker = RssWorker::new(name.to_owned(), url.to_owned(), worker);
+            let rss_worker = RssWorker::new(Arc::new(config.clone()), worker);
             (url.to_owned(), rss_worker)
         })
         .collect::<HashMap<String, RssWorker>>();

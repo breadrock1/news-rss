@@ -1,13 +1,12 @@
 use crate::cache::CacheService;
 use crate::crawler::CrawlerService;
-use crate::feeds::rss_feeds::config::RssConfig;
 use crate::feeds::rss_feeds::RssFeeds;
 use crate::feeds::FetchTopic;
 use crate::publish::Publisher;
 use crate::server::errors::ServerError;
 use crate::server::errors::ServerResult;
 use crate::server::errors::Success;
-use crate::server::forms::CreateWorkerForm;
+use crate::server::forms::{CreateWorkerForm, RssConfigForm};
 use crate::server::forms::GetInfoForm;
 use crate::server::forms::GetInfoResponse;
 use crate::server::forms::TerminateWorkerForm;
@@ -59,14 +58,17 @@ where
 
     let response = workers_guard
         .values()
-        .map(|worker| {
+        .filter_map(|worker| {
             let is_launched = !worker.worker().is_finished();
+            let worker_config = worker.config().as_ref();
+            let config = RssConfigForm::from(worker_config);
             let response = GetInfoResponse::builder()
-                .source_name(worker.source_name().to_owned())
-                .source_url(worker.source_url().to_owned())
+                .source_name(worker_config.source_name().to_owned())
+                .source_url(worker_config.target_url().to_owned())
+                .configuration(Some(config))
                 .is_launched(is_launched)
                 .build()
-                .unwrap();
+                .ok();
 
             response
         })
@@ -117,20 +119,22 @@ where
     let workers_guard = workers.read().await;
 
     let worker_name = form.source_url();
-
     let Some(worker) = workers_guard.get(worker_name) else {
-        tracing::warn!("there is not worker with name: {worker_name}");
-        let msg = format!("worker with name {worker_name}");
+        let msg = format!("there is no any worker with name: {worker_name}");
+        tracing::warn!("{}", &msg);
         return Err(ServerError::NotFound(msg));
     };
 
     let is_launched = !worker.worker().is_finished();
+    let worker_config = worker.config().as_ref();
+    let config_form = RssConfigForm::from(worker_config);
     let response = GetInfoResponse::builder()
         .source_name(form.source_name().to_owned())
         .source_url(form.source_url().to_owned())
         .is_launched(is_launched)
+        .configuration(Some(config_form))
         .build()
-        .unwrap();
+        .map_err(|err| ServerError::InternalError(err.to_string()))?;
 
     Ok(Json(response))
 }
@@ -185,17 +189,15 @@ where
         }
     }
 
-    let config = RssConfig::from(&form);
+    let config = form.to_rss_config();
     let cache = state.cache.clone();
     let crawler = state.crawler.clone();
     let publish = state.publish.clone();
-    let feeds = RssFeeds::new(config, publish, cache, crawler).unwrap();
+    let feeds = RssFeeds::new(config.clone(), publish, cache, crawler).unwrap();
 
     let task = tokio::spawn(async move { feeds.launch_fetching().await });
 
-    let source = form.source_name().to_owned();
-    let target = form.target_url().to_owned();
-    let rss_worker = RssWorker::new(source, target, task);
+    let rss_worker = RssWorker::new(Arc::new(config), task);
     workers_guard.insert(worker_name.to_owned(), rss_worker);
 
     Ok(Json(Success::default()))
@@ -244,24 +246,22 @@ where
 
     let worker_name = form.target_url();
     let Some(worker) = workers_guard.get(worker_name) else {
-        tracing::warn!("there is not worker with name: {worker_name}");
-        let msg = format!("worker with name {worker_name}");
+        let msg = format!("there is no any worker with name: {worker_name}");
+        tracing::warn!("{}", &msg);
         return Err(ServerError::NotFound(msg));
     };
 
     worker.worker().abort();
 
-    let config = RssConfig::from(&form);
+    let config = form.to_rss_config();
     let cache = state.cache.clone();
     let crawler = state.crawler.clone();
     let publish = state.publish.clone();
-    let feeds = RssFeeds::new(config, publish, cache, crawler).unwrap();
+    let feeds = RssFeeds::new(config.clone(), publish, cache, crawler).unwrap();
 
     let task = tokio::spawn(async move { feeds.launch_fetching().await });
 
-    let source = form.source_name().to_owned();
-    let target = form.target_url().to_owned();
-    let rss_worker = RssWorker::new(source, target, task);
+    let rss_worker = RssWorker::new(Arc::new(config), task);
     workers_guard.insert(worker_name.to_owned(), rss_worker);
 
     Ok(Json(Success::default()))
@@ -310,8 +310,8 @@ where
 
     let worker_name = form.source_url();
     let Some(worker) = workers_guard.get(worker_name) else {
-        tracing::warn!("there is not worker with name: {worker_name}");
-        let msg = format!("worker with name {worker_name}");
+        let msg = format!("there is not worker with name: {worker_name}");
+        tracing::warn!("{}", &msg);
         return Err(ServerError::NotFound(msg));
     };
 
