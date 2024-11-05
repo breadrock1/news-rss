@@ -20,9 +20,42 @@ use news_rss::publish::rabbit::config::RabbitConfig;
 use news_rss::publish::rabbit::RabbitPublisher;
 use news_rss::ServiceConnect;
 use std::sync::Arc;
+use wiremock::matchers::{method, path};
+use wiremock::{Mock, MockServer, ResponseTemplate};
 
 #[allow(dead_code)]
 const TEST_AMQP_CONSUMER_TAG: &str = "test-news-rss-consumer";
+pub const TEST_LLM_URL: &str = "/v1/chat/completions";
+pub const TEST_NEWS_URL: &str = "/news/index.html";
+pub const INPUT_HTML_DATA: &[u8] = include_bytes!("resources/cnn-news.html");
+pub const INPUT_LLM_RESP_JSON_DATA: &str = include_str!("resources/llm-chat-response.json");
+
+pub async fn build_mock_server() -> MockServer {
+    let mock_server = MockServer::start().await;
+    create_load_news_route(&mock_server, TEST_NEWS_URL, "GET").await;
+    create_llm_completion_route(&mock_server, TEST_LLM_URL, "POST").await;
+    mock_server
+}
+
+pub async fn create_load_news_route(mock: &MockServer, url: &str, http_method: &str) {
+    let resp_template = ResponseTemplate::new(200).set_body_bytes(INPUT_HTML_DATA);
+
+    Mock::given(method(http_method))
+        .and(path(url))
+        .respond_with(resp_template)
+        .mount(mock)
+        .await;
+}
+
+pub async fn create_llm_completion_route(mock: &MockServer, url: &str, http_method: &str) {
+    let resp_template = ResponseTemplate::new(200).set_body_string(INPUT_LLM_RESP_JSON_DATA);
+
+    Mock::given(method(http_method))
+        .and(path(url))
+        .respond_with(resp_template)
+        .mount(mock)
+        .await;
+}
 
 #[allow(dead_code)]
 #[allow(unused_assignments)]

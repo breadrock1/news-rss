@@ -28,13 +28,11 @@ pub fn extract_semantic_blocks(text_data: &str) -> Result<String, anyhow::Error>
     let trim_str = text_data.trim();
     let founded_data = Regex::new(FIND_LLM_BLOCKS_REGEX)?
         .find_iter(trim_str)
-        .filter_map(|it| {
-            match extract_json_object(it.as_str()) {
-                Ok(data) => Some(data),
-                Err(err) => {
-                    println!("failed while extracting json object: {err:#?}");
-                    None
-                }
+        .filter_map(|it| match extract_json_object(it.as_str()) {
+            Ok(data) => Some(data),
+            Err(err) => {
+                tracing::error!(err=?err, "failed while extracting json object");
+                None
             }
         })
         .collect::<Vec<SemanticBlock>>();
@@ -42,17 +40,18 @@ pub fn extract_semantic_blocks(text_data: &str) -> Result<String, anyhow::Error>
     let joined_strings = founded_data
         .into_iter()
         .filter(|it| {
-            let lowercase_tags = it.tags()
+            let lowercase_tags = it
+                .tags()
                 .iter()
                 .map(|tag| tag.to_lowercase())
                 .collect::<Vec<String>>();
 
-                lowercase_tags
-                    .iter()
-                    .map(|it| it.as_str())
-                    .any(|it| FILTER_BLOCKS_TAGS.contains(&it))
+            lowercase_tags
+                .iter()
+                .map(|it| it.as_str())
+                .any(|it| FILTER_BLOCKS_TAGS.contains(&it))
         })
-        .flat_map(|it| it.content.to_owned())
+        .map(|it| it.content.join(" "))
         .collect::<Vec<String>>()
         .join("\n");
 
@@ -77,8 +76,8 @@ fn extract_json_object(repaired: &str) -> Result<SemanticBlock, anyhow::Error> {
 mod test_llm_retriever {
     use super::*;
 
-    const BROKEN_CNN_JSON: &str = include_str!("../../../tests/resources/responses/cnn-news-llm-response.txt");
-    const BROKEN_NDTV_JSON: &str = include_str!("../../../tests/resources/responses/ndtv-uk-news-llm-response.txt");
+    const BROKEN_CNN_JSON: &str = include_str!("../../../tests/resources/cnn-news-llm-resp.txt");
+    const BROKEN_NDTV_JSON: &str = include_str!("../../../tests/resources/ndtv-news-llm-resp.txt");
 
     #[test]
     fn test_cnn_retriever() -> Result<(), anyhow::Error> {

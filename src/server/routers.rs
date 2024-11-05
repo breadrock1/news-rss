@@ -6,10 +6,10 @@ use crate::publish::Publisher;
 use crate::server::errors::ServerError;
 use crate::server::errors::ServerResult;
 use crate::server::errors::Success;
-use crate::server::forms::{CreateWorkerForm, RssConfigForm};
 use crate::server::forms::GetInfoForm;
 use crate::server::forms::GetInfoResponse;
 use crate::server::forms::TerminateWorkerForm;
+use crate::server::forms::{CreateWorkerForm, RssConfigForm};
 use crate::server::swagger::SwaggerExamples;
 use crate::server::{RssWorker, ServerApp};
 

@@ -46,7 +46,7 @@ async fn test_rss_feeds() -> Result<(), anyhow::Error> {
             let it_cln = it.clone();
             let worker = tokio::spawn(async move { it_cln.launch_fetching().await });
 
-            let rss_worker = RssWorker::new(name.to_owned(), url.to_owned(), worker);
+            let rss_worker = RssWorker::new(Arc::new(config.clone()), worker);
             (url.to_owned(), rss_worker)
         })
         .collect::<HashMap<String, RssWorker>>();

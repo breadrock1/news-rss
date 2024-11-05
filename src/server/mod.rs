@@ -28,10 +28,7 @@ pub struct RssWorker {
 
 impl RssWorker {
     pub fn new(config: Arc<RssConfig>, worker: JoinHandle<Result<(), anyhow::Error>>) -> Self {
-        RssWorker {
-            config,
-            worker,
-        }
+        RssWorker { config, worker }
     }
 }
 
