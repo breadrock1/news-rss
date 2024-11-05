@@ -9,7 +9,7 @@ pub struct PublishNews {
     id: String,
     text: String,
     message_url: String,
-    datetime: NaiveDateTime,
+    date: NaiveDateTime,
     source: Option<String>,
     photo_path: Option<String>,
 }

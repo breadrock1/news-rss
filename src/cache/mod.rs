@@ -1,11 +1,11 @@
-use crate::publish::models::PublishNews;
-
 pub mod config;
 mod error;
 pub mod local;
 
 #[cfg(feature = "cache-redis")]
 pub mod redis;
+
+use crate::publish::models::PublishNews;
 
 #[async_trait::async_trait]
 pub trait CacheService {

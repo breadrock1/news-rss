@@ -3,6 +3,7 @@ use news_rss::publish::rabbit::config::RabbitConfig;
 use news_rss::publish::Publisher;
 use news_rss::ServiceConnect;
 
+#[derive(Clone)]
 pub struct MockRabbitPublisher {}
 
 #[async_trait::async_trait]

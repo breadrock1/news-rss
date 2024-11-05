@@ -1,45 +1,35 @@
+mod tests_helper;
+
 #[cfg(feature = "crawler-llm")]
 mod test_crawler_llm {
-    use html2text::from_read;
+    use crate::tests_helper;
+
     use news_rss::config::ServiceConfig;
+    use news_rss::crawler::llm::config::LlmConfig;
     use news_rss::crawler::llm::LlmCrawler;
     use news_rss::crawler::CrawlerService;
     use news_rss::{logger, ServiceConnect};
-    use regex::Regex;
-    use std::sync::Arc;
 
-    const INPUT_HTML_FILE: &[u8] = include_bytes!("resources/cnn-news.html");
+    const ASSERT_CRAWLER_DATA: &str = include_str!("resources/llm-chat-response-assert.txt");
 
     #[tokio::test]
     async fn test_llm_crawler() -> Result<(), anyhow::Error> {
         let config = ServiceConfig::new()?;
         logger::init_logger(config.logger())?;
 
-        let crawler = LlmCrawler::connect(config.crawler().llm()).await?;
-        let crawler = Arc::new(crawler);
+        let mock = tests_helper::build_mock_server().await;
+        let llm_address = format!("http://{}/v1", mock.address());
+        tracing::info!("llm address is {}", &llm_address);
+        let llm_config = LlmConfig::builder()
+            .api_key("sk-no-key-required".to_string())
+            .base_url(llm_address)
+            .build()?;
 
-        let html_text = from_read(&INPUT_HTML_FILE[..], INPUT_HTML_FILE.len())?;
-        let result = crawler.scrape_text(&html_text).await?;
+        let crawler = LlmCrawler::connect(&llm_config).await?;
+        let result = crawler.scrape("").await?;
 
-        println!("{result}");
-
-        Ok(())
-    }
-
-    #[tokio::test]
-    async fn test_scrape_text() -> Result<(), anyhow::Error> {
-        let config = ServiceConfig::new()?;
-        logger::init_logger(config.logger())?;
-
-        let crawler = LlmCrawler::connect(config.crawler().llm()).await?;
-        let response = crawler.scrape_text("<p>Hello world<p>").await?;
-
-        let matched = Regex::new(r#"Hello world"#)?
-            .find(&response)
-            .map(|it| it.len())
-            .unwrap_or(0);
-
-        assert!(matched > 0);
+        tracing::info!("there is scraped text: {result}");
+        assert_eq!(ASSERT_CRAWLER_DATA, result);
 
         Ok(())
     }

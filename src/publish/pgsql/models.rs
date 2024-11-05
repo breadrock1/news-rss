@@ -24,7 +24,7 @@ impl From<&PublishNews> for PgPublishNewsModel {
         PgPublishNewsModel::builder()
             .id(value.id().to_owned())
             .message_url(value.message_url().to_owned())
-            .datetime(value.datetime().to_owned())
+            .datetime(value.date().to_owned())
             .source(value.source().to_owned())
             .photo_path(value.photo_path().to_owned())
             .text(value.text().to_owned())

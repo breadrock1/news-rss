@@ -13,9 +13,12 @@ use news_rss::crawler::native::NativeCrawler;
 use news_rss::feeds::rss_feeds::RssFeeds;
 use news_rss::feeds::FetchTopic;
 use news_rss::publish::rabbit::RabbitPublisher;
-use news_rss::{logger, ServiceConnect};
+use news_rss::server::{RssWorker, ServerApp};
+use news_rss::{logger, server, ServiceConnect};
+use std::collections::HashMap;
 use std::sync::Arc;
-use tokio::task::JoinError;
+use tokio::net::TcpListener;
+use tower_http::{cors, trace};
 
 #[tokio::main]
 async fn main() -> Result<(), anyhow::Error> {
@@ -37,47 +40,37 @@ async fn main() -> Result<(), anyhow::Error> {
     #[cfg(feature = "crawler-llm")]
     let crawler = build_llm_crawler(&config).await?;
 
-    let topics_config = config.topics();
-    let rss_config = topics_config.rss();
-
-    let rss_feeds = rss_config
-        .target_url()
-        .split(',')
-        .filter_map(|it| {
-            let mut rss_config = topics_config.rss();
-            rss_config.set_target_url(it.to_string());
-            RssFeeds::new(&rss_config, publish.clone(), cache.clone(), crawler.clone()).ok()
-        })
-        .collect::<Vec<RssFeeds<_, _, _>>>();
-
-    let rss_workers = rss_feeds
+    let rss_config = vec![config.topics().rss()];
+    let rss_workers = rss_config
         .into_iter()
-        .map(|it| tokio::spawn(async move { it.launch_fetching().await }))
-        .collect::<Vec<_>>();
+        .filter_map(|it| RssFeeds::new(it, publish.clone(), cache.clone(), crawler.clone()).ok())
+        .map(|it| {
+            let config = it.config();
 
-    for worker in rss_workers {
-        let res = worker.await;
-        extract_worker_result(res);
-    }
+            let url = config.target_url();
+            let it_cln = it.clone();
+            let worker = tokio::spawn(async move { it_cln.launch_fetching().await });
+
+            let rss_worker = RssWorker::new(Arc::new(config.clone()), worker);
+            (url.to_owned(), rss_worker)
+        })
+        .collect::<HashMap<String, RssWorker>>();
+
+    let listener = TcpListener::bind(config.server().address()).await?;
+    let server_app = ServerApp::new(rss_workers, publish, cache, crawler);
+    let trace_layer = trace::TraceLayer::new_for_http()
+        .make_span_with(trace::DefaultMakeSpan::new().level(tracing::Level::INFO))
+        .on_response(trace::DefaultOnResponse::new().level(tracing::Level::INFO));
+
+    let cors_layer = cors::CorsLayer::permissive();
+
+    let app = server::init_server(server_app)
+        .layer(trace_layer)
+        .layer(cors_layer);
+
+    axum::serve(listener, app).await?;
 
     Ok(())
-}
-
-fn extract_worker_result(result: Result<Result<(), anyhow::Error>, JoinError>) {
-    let join_result = match result {
-        Ok(res) => res,
-        Err(err) => {
-            tracing::error!("failed to joint worker: {err:#?}");
-            return;
-        }
-    };
-
-    if let Err(err) = join_result {
-        tracing::error!("internal worker error: {err:#?}");
-        return;
-    }
-
-    tracing::info!("worker has been terminated successful");
 }
 
 pub async fn build_local_cache(config: &ServiceConfig) -> Result<Arc<LocalCache>, anyhow::Error> {
