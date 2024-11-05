@@ -41,7 +41,6 @@ async fn test_rss_feeds() -> Result<(), anyhow::Error> {
         .map(|it| {
             let config = it.config();
 
-            let name = config.source_name();
             let url = config.target_url();
             let it_cln = it.clone();
             let worker = tokio::spawn(async move { it_cln.launch_fetching().await });
