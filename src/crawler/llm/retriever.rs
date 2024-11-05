@@ -31,7 +31,7 @@ pub fn extract_semantic_blocks(text_data: &str) -> Result<String, anyhow::Error>
         .filter_map(|it| match extract_json_object(it.as_str()) {
             Ok(data) => Some(data),
             Err(err) => {
-                tracing::error!(err=?err, "failed while extracting json object");
+                tracing::warn!("failed while extracting json object: {err:#?}");
                 None
             }
         })
