@@ -5,7 +5,8 @@ pub mod native;
 
 #[async_trait::async_trait]
 pub trait CrawlerService {
-    type Error;
+    type Error: std::fmt::Debug + std::fmt::Display;
 
-    async fn scrape_text(&self, text_data: &str) -> Result<String, Self::Error>;
+    async fn scrape(&self, text_data: &str) -> Result<String, Self::Error>;
+    async fn scrape_by_url(&self, url: &str) -> Result<String, Self::Error>;
 }

@@ -2,14 +2,12 @@
 level = "info"
 
 [cache.local]
-expired = 10368000
+expired_secs = 10368000
 
 [cache.redis]
 address = "redis://redis:6379"
 username = "redis"
 password = "redis"
-stream_name = "news-rss-stream"
-capacity_gb = 1
 
 [publish.rmq]
 address = "amqp://rabbitmq:5672"
@@ -35,4 +33,5 @@ base_url = "http://llm:8081/v1"
 max_retries = 3
 timeout = 100
 interval_secs = 3600
-target_url = "https://feeds.feedburner.com/ndtvnews-world-news,https://feeds.skynews.com/feeds/rss/world.xml"
+source_name = "NDTV Worlds News"
+target_url = "https://feeds.feedburner.com/ndtvnews-world-news"

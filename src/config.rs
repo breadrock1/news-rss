@@ -3,6 +3,7 @@ use crate::crawler::config::CrawlerConfig;
 use crate::feeds::config::TopicsConfig;
 use crate::logger::LoggerConfig;
 use crate::publish::config::PublishConfig;
+use crate::server::config::ServerConfig;
 
 use config::{Config, ConfigError, Environment, File};
 use getset::Getters;
@@ -15,6 +16,7 @@ const SERVICE_RUN_MODE: &str = "NEWS_RSS_RUN_MODE";
 #[getset(get = "pub")]
 pub struct ServiceConfig {
     logger: LoggerConfig,
+    server: ServerConfig,
     cache: CacheConfig,
     publish: PublishConfig,
     topics: TopicsConfig,

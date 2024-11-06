@@ -9,6 +9,8 @@ publish-offline = ["dep:sqlx"]
 crawler-llm = ["dep:openai_dive", "dep:html2text"]
 default = []
 
+test-publish-rabbit = []
+
 [dependencies]
 anyhow = "^1.0"
 async-trait = "^0.1"
@@ -27,13 +29,30 @@ tracing-subscriber = "^0.3"
 console-subscriber = "^0.4"
 url-builder = "^0.1"
 
+[dependencies.axum]
+version = "^0.7"
+features = ["tracing", "tower-log"]
+
 [dependencies.chrono]
 version = "^0.4"
 features = ["serde"]
 
+[dependencies.html2text]
+optional = true
+version = "^0.13"
+
 [dependencies.moka]
 version = "^0.12"
 features = ["future"]
+
+[dependencies.openai_dive]
+optional = true
+version = "^0.6"
+
+[dependencies.redis]
+optional = true
+version = "^0.27"
+features = ["aio", "tokio-comp", "connection-manager", "serde_json", "json"]
 
 [dependencies.reqwest]
 version = "^0.12"
@@ -43,27 +62,26 @@ features = ["json"]
 version = "^1.0"
 features = ["derive", "serde_derive"]
 
-[dependencies.tokio]
-version = "^1.38"
-features = ["full"]
-
-[dependencies.openai_dive]
-optional = true
-version = "^0.6"
-
-[dependencies.html2text]
-optional = true
-version = "^0.13"
-
 [dependencies.sqlx]
 optional = true
 version = "^0.7"
 features = ["postgres", "runtime-tokio", "chrono"]
 
-[dependencies.redis]
-optional = true
-version = "^0.27"
-features = ["aio", "tokio-comp", "connection-manager", "serde_json", "json"]
+[dependencies.tokio]
+version = "^1.38"
+features = ["full"]
+
+[dependencies.tower-http]
+version = "^0.6"
+features = ["trace", "cors"]
+
+[dependencies.utoipa]
+version = "^5.1"
+features = ["axum_extras", "chrono"]
+
+[dependencies.utoipa-swagger-ui]
+version = "^8.0"
+features = ["axum"]
 
 [dev-dependencies]
 lazy_static = "^1.5"
@@ -72,3 +90,11 @@ wiremock = "^0.6"
 [[bin]]
 name = "news-rss"
 path = "src/bin/main.rs"
+
+[[test]]
+name = "test-crawler-llm"
+path = "tests/test_crawler_llm.rs"
+
+[[test]]
+name = "test-publish-feeds"
+path = "tests/test_publish_feeds.rs"

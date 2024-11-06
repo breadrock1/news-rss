@@ -1,0 +1,201 @@
+"Here is the output in the requested format:
+
+<blocks>
+[
+  {
+    "index": 0,
+    "tags": ["header", "navigation"],
+    "content": [
+      "CNN values your feedback",
+      "How relevant is this ad to you?",
+      "Did you encounter any technical issues?"
+    ]
+  },
+  {
+    "index": 1,
+    "tags": ["ad", "feedback"],
+    "content": [
+      "Video player was slow to load content",
+      "Video content never loaded",
+      "Ad froze or did not finish loading",
+      "Video content did not start after ad",
+      "Audio on ad was too loud",
+      "Other issues"
+    ]
+  },
+  {
+    "index": 2,
+    "tags": ["options", "list"],
+    "content": [
+      "Ad never loaded",
+      "Ad prevented/slowed the page from loading",
+      "Content moved around while ad loaded",
+      "Ad was repetitive to ads I've seen previously",
+      "Other issues"
+    ]
+  },
+  {
+    "index": 3,
+    "tags": ["thank", "you"],
+    "content": [
+      "Thank You!",
+      "Your effort and contribution in providing this feedback is much appreciated."
+    ]
+  },
+  {
+    "index": 4,
+    "tags": ["navigation", "links"],
+    "content": [
+      "[ Arts ][1] [ Design ][2]",
+      "[ Fashion ][5] [ Architecture ][6] [ Luxury ][7] [ Beauty ][8] [ Video ][9]",
+      "More [ Arts ][10] [ Design ][11] [ Fashion ][12] [ Architecture ][13] [ Luxury ][14] [ Beauty ][15] [ Video ][16]"
+    ]
+  },
+  {
+    "index": 5,
+    "tags": ["options", "list"],
+    "content": [
+      "[ Watch ][17] [ Listen ][18] [ Live TV ][19]",
+      "Subscribe Sign in",
+      "My Account"
+    ]
+  },
+  {
+    "index": 6,
+    "tags": ["options", "list"],
+    "content": [
+      "* [ Settings ][20]",
+      "* [ Topics You Follow ][21]",
+      "* [ Sign Out ][22]",
+      "Your CNN account Sign in to your CNN account"
+    ]
+  },
+  {
+    "index": 7,
+    "tags": ["options", "list"],
+    "content": [
+      "* [ Settings ][23]",
+      "* [ Topics You Follow ][24]",
+      "* [ Sign Out ][25]",
+      "Your CNN account Sign in to your CNN account"
+    ]
+  },
+  {
+    "index": 8,
+    "tags": ["links", "options"],
+    "content": [
+      "[ Live TV ][26] [ Listen ][27] [ Watch ][28]",
+      "Edition [ US ][29]",
+      "[ International ][30] [ Arabic ][31] [ Español ][32]",
+      "Edition"
+    ]
+  },
+  {
+    "index": 9,
+    "tags": ["options", "list"],
+    "content": [
+      "* [ US ][33]",
+      "* [ International ][34]",
+      "* [ Arabic ][35]",
+      "* [ Español ][36]",
+      "[ Arts ][37] [ Design ][38] [ Fashion ][39] [ Architecture ][40] [ Luxury ][41] [ Beauty ][42] [ Video ][43]"
+    ]
+  },
+  {
+    "index": 10,
+    "tags": ["headline", "article"],
+    "content": [
+      "# This is the world’s smallest Rubik’s Cube. And it actually works",
+      "[ [Chris Lau] ][157]",
+      "By [Chris Lau][158] and Nodoka Katsura, CNN"
+    ]
+  },
+  {
+    "index": 11,
+    "tags": ["text", "article"],
+    "content": [
+      "2 minute read",
+      "Published 4:16 AM EDT, Fri October 4, 2024",
+      "Link Copied!",
+      "[The tiniest Rubik’s Cube.]",
+      "The tiniest Rubik’s Cube."
+    ]
+  },
+  {
+    "index": 12,
+    "tags": ["text", "article"],
+    "content": [
+      "Japanese toymaker MegaHouse has unveiled a miniature Rubik’s Cube — one so tiny that you might need a pair of tweezers to solve it.",
+      "Each face of the cube, which is made from aluminum, measures about five millimeters (around 0.2 inches) across.",
+      "It was made available for pre-order on the manufacturer’s website on Thursday, with deliveries expected next April."
+    ]
+  },
+  {
+    "index": 13,
+    "tags": ["text", "article"],
+    "content": [
+      "Weighing just 0.3 grams (about 0.01 ounces), the puzzle is about a 1,000th of the size of the original, which measures around 2.2 inches across each face.",
+      "And each side of the nine squares on the device’s six faces measures just 1.6 millimeters (around 0.06 inches).",
+      "MegaHouse told CNN that the company started conceptualizing it four years ago and began the process to produce it in 2022."
+    ]
+  },
+  {
+    "index": 14,
+    "tags": ["text", "article"],
+    "content": [
+      "Guinness World Record confirmed the micro-cube as the world’s smallest rotating puzzle cube in August.",
+      "The miniature model breaks the record set by British puzzle designer Tony Fisher in 2016, when he startled fans with a 5.6-milimeter version.",
+      "But the price tag suggests it’s likely to be a collector’s item rather than the kind of cube that players fiddle with on the go."
+    ]
+  },
+  {
+    "index": 15,
+    "tags": ["text", "article"],
+    "content": [
+      "They are being sold at 777,777 yen ($5,320), and each comes with a stand declaring it the “World’s record smallest Rubik’s Cube.”"
+    ]
+  },
+  {
+    "index": 16,
+    "tags": ["links", "images"],
+    "content": [
+      "[The miniature cube in comparison to a standard one.]",
+      "29 January 2020, Bavaria, Nuremberg: The Rubik's Cube stands on a table at the Ravensburger stand at the International Toy Fair as part of the celebrations for 40 years of distribution of the game in Germany."
+    ]
+  },
+  {
+    "index": 17,
+    "tags": ["text", "article"],
+    "content": [
+      "Related article How quickly can you solve a Rubik’s Cube? A 21-year-old set a new world record that will stun you"
+    ]
+  },
+  {
+    "index": 18,
+    "tags": ["navigation", "links"],
+    "content": [
+      "[ Watch ][280] [ Listen ][281] [ Live TV ][282]",
+      "Follow CNN Style"
+    ]
+  },
+  {
+    "index": 19,
+    "tags": ["options", "list"],
+    "content": [
+      "Sign in",
+      "My Account",
+      "* [ Settings ][283]",
+      "* [ Topics You Follow ][284]",
+      "* [ Sign Out ][285]"
+    ]
+  },
+  {
+    "index": 20,
+    "tags": ["options", "list"],
+    "content": [
+      "Your CNN account Sign in to your CNN account",
+      "[ Terms of Use ][286] [ Privacy Policy ][287] [ Ad Choices ][288] [ Accessibility & CC ][289] [ About ][290] [ Newsletters ][291] [ Transcripts ][292]"
+    ]
+  }
+]
+</blocks>"

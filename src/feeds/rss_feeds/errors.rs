@@ -11,7 +11,7 @@ pub enum RssError {
     #[error("failed to de/serialize: {0}")]
     SerdeError(String),
     #[error("rss crate error: {0}")]
-    RssService(String),
+    RssService(#[from] rss::Error),
     #[error("retry crate error: {0}")]
     RetryFailed(String),
 }
@@ -41,11 +41,5 @@ impl From<reqwest_middleware::Error> for RssError {
             408 => RssError::RequestTimeout(err.to_string()),
             _ => RssError::ServiceError(err.to_string()),
         }
-    }
-}
-
-impl From<rss::Error> for RssError {
-    fn from(err: rss::Error) -> Self {
-        RssError::RssService(err.to_string())
     }
 }

@@ -1,3 +1,5 @@
+ARG FEATURES='--features default'
+
 FROM rust:latest AS chef
 
 WORKDIR /app
@@ -26,7 +28,8 @@ RUN cargo chef cook --release --recipe-path recipe.json
 
 COPY . .
 
-RUN cargo install --bins --path .
+RUN echo -e 'building binary with feature "${FEATURES}"'
+RUN cargo install ${FEATURES} --bins --path .
 
 
 # Target layer based on tiny official ubuntu image with neccessary binaries and data to run.

@@ -12,7 +12,7 @@ use sqlx::postgres::PgPoolOptions;
 use sqlx::{Error, Pool, Postgres};
 use std::sync::Arc;
 
-#[derive(Getters)]
+#[derive(Clone, Getters)]
 pub struct PgsqlPublisher {
     pool: Arc<Pool<Postgres>>,
 }
