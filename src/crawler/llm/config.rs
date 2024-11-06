@@ -1,10 +1,16 @@
+use derive_builder::Builder;
 use getset::{CopyGetters, Getters};
 use serde::Deserialize;
 
-#[derive(Clone, Deserialize, Getters, CopyGetters)]
+#[derive(Clone, Builder, Deserialize, Getters, CopyGetters)]
+#[getset(get = "pub")]
 pub struct LlmConfig {
-    #[getset(get = "pub")]
     api_key: String,
-    #[getset(get = "pub")]
     base_url: String,
+}
+
+impl LlmConfig {
+    pub fn builder() -> LlmConfigBuilder {
+        LlmConfigBuilder::default()
+    }
 }

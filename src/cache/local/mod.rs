@@ -10,6 +10,7 @@ use moka::future::Cache;
 use std::sync::Arc;
 use std::time::Duration;
 
+#[derive(Clone)]
 pub struct LocalCache {
     config: Arc<LocalCacheConfig>,
     client: Cache<String, PublishNews>,
@@ -29,7 +30,7 @@ impl ServiceConnect for LocalCache {
 
     async fn connect(config: &Self::Config) -> Result<Self::Client, Self::Error> {
         let cacher = Cache::builder()
-            .time_to_live(Duration::from_secs(config.expired()))
+            .time_to_live(Duration::from_secs(config.expired_secs()))
             .build();
 
         Ok(LocalCache {
@@ -41,9 +42,9 @@ impl ServiceConnect for LocalCache {
 
 #[async_trait::async_trait]
 impl CacheService for LocalCache {
-    async fn set(&self, key: String, value: PublishNews) {
+    async fn set(&self, key: &str, value: &PublishNews) {
         let cache = &self.client;
-        cache.insert(key, value).await;
+        cache.insert(key.to_string(), value.to_owned()).await;
     }
 
     async fn contains(&self, key: &str) -> bool {

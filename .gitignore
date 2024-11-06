@@ -1,5 +1,7 @@
 .idea
+.vscode
 
 /rabbitmq-data
+/redis-data
 
 /target

@@ -3,8 +3,8 @@ use serde::Deserialize;
 use tracing_subscriber::filter::FromEnvError;
 
 #[derive(Deserialize, Getters)]
+#[getset(get = "pub")]
 pub struct LoggerConfig {
-    #[getset(get = "pub")]
     level: String,
 }
 
@@ -12,7 +12,7 @@ pub fn init_logger(config: &LoggerConfig) -> Result<(), FromEnvError> {
     init_rust_log_env(config);
 
     let env_filter = tracing_subscriber::EnvFilter::builder().from_env()?;
-    tracing_subscriber::FmtSubscriber::builder()
+    tracing_subscriber::fmt()
         .with_level(true)
         .with_thread_ids(true)
         .with_thread_names(true)
