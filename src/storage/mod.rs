@@ -1,4 +1,6 @@
 pub mod config;
+
+#[cfg(feature = "storage-pgsql")]
 pub mod pgsql;
 
 #[async_trait::async_trait]

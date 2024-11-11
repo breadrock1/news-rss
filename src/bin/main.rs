@@ -7,16 +7,19 @@ use news_rss::crawler::llm::LlmCrawler;
 #[cfg(feature = "publish-offline")]
 use news_rss::publish::pgsql::PgsqlPublisher;
 
+#[cfg(feature = "storage-pgsql")]
+use news_rss::storage::pgsql;
+
+#[allow(unused_imports)]
+use news_rss::feeds::rss_feeds::config::RssConfig;
+
 use news_rss::cache::local::LocalCache;
 use news_rss::config::ServiceConfig;
 use news_rss::crawler::native::NativeCrawler;
-use news_rss::feeds::rss_feeds::config::RssConfig;
 use news_rss::feeds::rss_feeds::RssFeeds;
 use news_rss::feeds::FetchTopic;
 use news_rss::publish::rabbit::RabbitPublisher;
 use news_rss::server::{RssWorker, ServerApp};
-use news_rss::storage::pgsql::PgsqlTopicStorage;
-use news_rss::storage::LoadTopic;
 use news_rss::{logger, server, ServiceConnect};
 use std::collections::HashMap;
 use std::sync::Arc;
@@ -134,25 +137,18 @@ pub async fn build_llm_crawler(config: &ServiceConfig) -> Result<Arc<LlmCrawler>
 pub async fn load_topics_from_pgsql(
     config: &ServiceConfig,
 ) -> Result<Vec<RssConfig>, anyhow::Error> {
+    use news_rss::storage::LoadTopic;
+
     let rss_config = config.topics().rss();
 
     let pgsql_config = config.storage().pgsql();
-    let storage = PgsqlTopicStorage::connect(pgsql_config).await?;
+    let storage = pgsql::PgsqlTopicStorage::connect(pgsql_config).await?;
     let mut topics = storage
         .load_at_launch()
         .await?
         .into_iter()
-        .map(|it| {
-            RssConfig::builder()
-                .source_name(it.name.to_owned())
-                .target_url(it.link.to_owned())
-                .max_retries(rss_config.max_retries())
-                .timeout(rss_config.timeout())
-                .interval_secs(rss_config.interval_secs())
-                .build()
-                .unwrap()
-        })
-        .map(|it| (it.target_url().to_owned(), it))
+        .map(RssConfig::from)
+        .map(|it: RssConfig| (it.target_url().to_owned(), it))
         .collect::<HashMap<String, RssConfig>>();
 
     topics.insert(rss_config.target_url().to_owned(), rss_config);

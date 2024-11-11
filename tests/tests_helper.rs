@@ -13,12 +13,14 @@ use news_rss::crawler::llm::LlmCrawler;
 #[cfg(feature = "publish-offline")]
 use news_rss::publish::pgsql::PgsqlPublisher;
 
+#[cfg(feature = "storage-pgsql")]
+use news_rss::storage::pgsql::PgsqlTopicStorage;
+
 use news_rss::cache::local::LocalCache;
 use news_rss::config::ServiceConfig;
 use news_rss::crawler::native::NativeCrawler;
 use news_rss::publish::rabbit::config::RabbitConfig;
 use news_rss::publish::rabbit::RabbitPublisher;
-use news_rss::storage::pgsql::PgsqlTopicStorage;
 use news_rss::ServiceConnect;
 use std::sync::Arc;
 use wiremock::matchers::{method, path};
@@ -67,10 +69,15 @@ pub async fn rabbit_consumer(config: &RabbitConfig) -> Result<(), anyhow::Error>
         )
         .await?;
 
+    let queue_decl_opts = QueueDeclareOptions {
+        durable: true,
+        ..Default::default()
+    };
+
     channel
         .queue_declare(
             config.stream_name(),
-            QueueDeclareOptions::default(),
+            queue_decl_opts,
             FieldTable::default(),
         )
         .await?;
