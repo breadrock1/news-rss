@@ -3,7 +3,8 @@ use regex::{Captures, Regex, Replacer};
 use serde::Deserialize;
 
 const FILTER_BLOCKS_TAGS: [&str; 5] = ["article", "content", "text", "war", "world"];
-const FIND_LLM_BLOCKS_REGEX: &str = r#"\{(?:[^{}]|(?R))*}"#;
+const FIND_JSON_OBJECTS_REGEX: &str = r#"\{(?:[^{}]|(?R))*}"#;
+const FIND_LLM_BLOCKS_REGEX: &str = r#"<blocks>(?:[\W|\w])*<\/blocks>"#;
 
 #[derive(Debug, Getters, Deserialize)]
 #[getset(get = "pub")]
@@ -26,7 +27,22 @@ impl Replacer for DoubleQuotesReplacer {
 
 pub fn extract_semantic_blocks(text_data: &str) -> Result<String, anyhow::Error> {
     let trim_str = text_data.trim();
-    let founded_data = Regex::new(FIND_LLM_BLOCKS_REGEX)?
+    let Some(founded) = Regex::new(FIND_LLM_BLOCKS_REGEX)?.find(trim_str) else {
+        let msg = "cant found blocks data into llm response";
+        return Err(anyhow::Error::msg(msg));
+    };
+
+    let result = founded.as_str()
+        .replace("<blocks>", "")
+        .replace("</blocks>", "");
+
+    Ok(result)
+}
+
+#[allow(dead_code)]
+pub fn extract_json_semantic_blocks(text_data: &str) -> Result<String, anyhow::Error> {
+    let trim_str = text_data.trim();
+    let founded_data = Regex::new(FIND_JSON_OBJECTS_REGEX)?
         .find_iter(trim_str)
         .filter_map(|it| match extract_json_object(it.as_str()) {
             Ok(data) => Some(data),
@@ -81,7 +97,7 @@ mod test_llm_retriever {
 
     #[test]
     fn test_cnn_retriever() -> Result<(), anyhow::Error> {
-        let result = extract_semantic_blocks(BROKEN_CNN_JSON)?;
+        let result = extract_json_semantic_blocks(BROKEN_CNN_JSON)?;
         println!("{:#?}", result);
         assert_eq!(result.len(), 1527);
         Ok(())
@@ -89,7 +105,7 @@ mod test_llm_retriever {
 
     #[test]
     fn test_ndtv_retriever() -> Result<(), anyhow::Error> {
-        let result = extract_semantic_blocks(BROKEN_NDTV_JSON)?;
+        let result = extract_json_semantic_blocks(BROKEN_NDTV_JSON)?;
         println!("{:#?}", result);
         assert_eq!(result.len(), 1275);
         Ok(())
