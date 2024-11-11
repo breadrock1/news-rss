@@ -166,10 +166,10 @@ where
                 let data = description;
 
                 #[cfg(feature = "crawler-llm")]
-                let data = &source.clone().unwrap_or(link.to_string());
+                let data = link;
 
                 self.crawler()
-                    .scrape(data)
+                    .scrape_by_url(data)
                     .await
                     .map_err(|err| anyhow::Error::msg(err.to_string()))?
             }
