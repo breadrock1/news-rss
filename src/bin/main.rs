@@ -19,6 +19,9 @@ use std::collections::HashMap;
 use std::sync::Arc;
 use tokio::net::TcpListener;
 use tower_http::{cors, trace};
+use news_rss::feeds::rss_feeds::config::RssConfig;
+use news_rss::storage::LoadTopic;
+use news_rss::storage::pgsql::PgsqlTopicStorage;
 
 #[tokio::main]
 async fn main() -> Result<(), anyhow::Error> {
@@ -40,7 +43,11 @@ async fn main() -> Result<(), anyhow::Error> {
     #[cfg(feature = "crawler-llm")]
     let crawler = build_llm_crawler(&config).await?;
 
-    let rss_config = vec![config.topics().rss()];
+    #[allow(unused_variables)]
+    let rss_config = [config.topics().rss()];
+    #[cfg(feature = "storage-pgsql")]
+    let rss_config = load_topics_from_pgsql(&config).await?;
+
     let rss_workers = rss_config
         .into_iter()
         .filter_map(|it| RssFeeds::new(it, publish.clone(), cache.clone(), crawler.clone()).ok())
@@ -121,4 +128,32 @@ pub async fn build_llm_crawler(config: &ServiceConfig) -> Result<Arc<LlmCrawler>
     let crawler = LlmCrawler::connect(crawler_config).await?;
     let crawler = Arc::new(crawler);
     Ok(crawler)
+}
+
+#[cfg(feature = "storage-pgsql")]
+pub async fn load_topics_from_pgsql(config: &ServiceConfig) -> Result<Vec<RssConfig>, anyhow::Error> {
+    let rss_config = config.topics().rss();
+
+    let pgsql_config = config.storage().pgsql();
+    let storage = PgsqlTopicStorage::connect(pgsql_config).await?;
+    let mut topics = storage
+        .load_at_launch()
+        .await?
+        .into_iter()
+        .map(|it| {
+            RssConfig::builder()
+                .source_name(it.name.to_owned())
+                .target_url(it.link.to_owned())
+                .max_retries(rss_config.max_retries())
+                .timeout(rss_config.timeout())
+                .interval_secs(rss_config.interval_secs())
+                .build()
+                .unwrap()
+        })
+        .map(|it| (it.target_url().to_owned(), it))
+        .collect::<HashMap<String, RssConfig>>();
+
+    topics.insert(rss_config.target_url().to_owned(), rss_config);
+    let topics = topics.into_values().collect();
+    Ok(topics)
 }
