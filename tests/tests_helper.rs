@@ -22,6 +22,7 @@ use news_rss::ServiceConnect;
 use std::sync::Arc;
 use wiremock::matchers::{method, path};
 use wiremock::{Mock, MockServer, ResponseTemplate};
+use news_rss::storage::pgsql::PgsqlTopicStorage;
 
 #[allow(dead_code)]
 const TEST_AMQP_CONSUMER_TAG: &str = "test-news-rss-consumer";
@@ -152,6 +153,16 @@ pub async fn build_pgsql_publish(
 ) -> Result<Arc<PgsqlPublisher>, anyhow::Error> {
     let pgsql_config = config.publish().pgsql();
     let pgsql = PgsqlPublisher::connect(pgsql_config).await?;
+    let pgsql = Arc::new(pgsql);
+    Ok(pgsql)
+}
+
+#[cfg(feature = "storage-pgsql")]
+pub async fn build_pgsql_storage(
+    config: &ServiceConfig,
+) -> Result<Arc<PgsqlTopicStorage>, anyhow::Error> {
+    let pgsql_config = config.storage().pgsql();
+    let pgsql = PgsqlTopicStorage::connect(pgsql_config).await?;
     let pgsql = Arc::new(pgsql);
     Ok(pgsql)
 }
