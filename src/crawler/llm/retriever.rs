@@ -93,7 +93,7 @@ fn extract_json_object(repaired: &str) -> Result<SemanticBlock, anyhow::Error> {
 mod test_llm_retriever {
     use super::*;
 
-    const BROKEN_CNN_JSON: &str = include_str!("../../../tests/resources/cnn-news-llm-resp.txt");
+    const BROKEN_CNN_JSON: &str = include_str!("../../../tests/resources/cnn-json-llm-resp.txt");
     const BROKEN_NDTV_JSON: &str = include_str!("../../../tests/resources/ndtv-news-llm-resp.txt");
 
     #[test]

@@ -1,0 +1,11 @@
+After filtering out the blocks that do not contain relevant semantic tags, the output is:
+
+<blocks>
+  You have a preview view of this article while we are checking your access. When we have confirmed access, the full article content will load.
+  Early Thursday morning, taxi drivers gathered en masse outside Amsterdam’s Holland Casino. Hours before, Israeli soccer fans had stolen and burned a Palestinian flag, while others attacked a cab — and the drivers, the police said, were heeding an online call to “mobilize.”
+  Inside the casino, hundreds of Israeli fans waited for the local police to bring them back to their hotels. There had been confrontations nearby, the authorities said.
+  An Israeli fan who would agree to be identified only by his first name, Barak, said he encountered a young man in the casino with cuts on his hand and face, who had described being ambushed by men on scooters. “All his face was blood,” Barak said in an interview on Friday.
+  The casino said it had fired a security guard after learning of posts he sent later that evening to a chat group. In a screenshot of the exchange posted online, the guard promises to alert others on the thread if Israeli fans “show up again.” “Tomorrow after the game in the night,” someone replies, “part two of Jew hunt.”
+  The attacks near the casino were among the first in a series of assaults on visiting Israeli fans surrounding the Europa League match last week between an Israeli team, Maccabi Tel Aviv, and an Amsterdam-based opponent, Ajax. The Amsterdam authorities are still sorting through what, exactly, happened across the city over that two-day period, including what they have called antisemitic attacks, as well as inflammatory actions by Israeli fans.
+  The events rattled Amsterdam’s Jewish and Muslim communities and drew an international outcry, including from President Biden and the leaders of Israel and the Netherlands. The police are scheduled to present a more detailed account next week, ahead of a hastily called debate in the City Council over antisemitism.
+</blocks>
