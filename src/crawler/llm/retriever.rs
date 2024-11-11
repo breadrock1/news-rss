@@ -32,7 +32,8 @@ pub fn extract_semantic_blocks(text_data: &str) -> Result<String, anyhow::Error>
         return Err(anyhow::Error::msg(msg));
     };
 
-    let result = founded.as_str()
+    let result = founded
+        .as_str()
         .replace("<blocks>", "")
         .replace("</blocks>", "");
 

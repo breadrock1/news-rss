@@ -88,15 +88,13 @@ impl CrawlerService for LlmCrawler {
                 tracing::error!("failed to parse html: {err}");
                 html_str
             }
-            Ok(mut dom) => {
-                dom
-                    .remove_by(&Selector::from("nav"))
-                    .remove_by(&Selector::from("head"))
-                    .remove_by(&Selector::from("header"))
-                    .remove_by(&Selector::from("footer"))
-                    .trim()
-                    .html()
-            }
+            Ok(mut dom) => dom
+                .remove_by(&Selector::from("nav"))
+                .remove_by(&Selector::from("head"))
+                .remove_by(&Selector::from("header"))
+                .remove_by(&Selector::from("footer"))
+                .trim()
+                .html(),
         };
 
         let html_bytes = html_str.as_bytes();
