@@ -22,12 +22,30 @@
         "ordinal": 3,
         "name": "run_at_launch",
         "type_info": "Bool"
+      },
+      {
+        "ordinal": 4,
+        "name": "max_retries",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 5,
+        "name": "timeout",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 6,
+        "name": "interval_secs",
+        "type_info": "Int4"
       }
     ],
     "parameters": {
       "Left": []
     },
     "nullable": [
+      false,
+      false,
+      false,
       false,
       false,
       false,
