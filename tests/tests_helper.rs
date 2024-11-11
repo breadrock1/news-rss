@@ -75,11 +75,7 @@ pub async fn rabbit_consumer(config: &RabbitConfig) -> Result<(), anyhow::Error>
     };
 
     channel
-        .queue_declare(
-            config.stream_name(),
-            queue_decl_opts,
-            FieldTable::default(),
-        )
+        .queue_declare(config.stream_name(), queue_decl_opts, FieldTable::default())
         .await?;
 
     channel
