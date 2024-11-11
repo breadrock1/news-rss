@@ -7,9 +7,9 @@ use crate::storage::LoadTopic;
 use crate::ServiceConnect;
 
 use getset::Getters;
-use std::sync::Arc;
-use sqlx::{Pool, Postgres};
 use sqlx::postgres::PgPoolOptions;
+use sqlx::{Pool, Postgres};
+use std::sync::Arc;
 
 #[derive(Clone, Getters)]
 pub struct PgsqlTopicStorage {

@@ -18,11 +18,11 @@ use news_rss::config::ServiceConfig;
 use news_rss::crawler::native::NativeCrawler;
 use news_rss::publish::rabbit::config::RabbitConfig;
 use news_rss::publish::rabbit::RabbitPublisher;
+use news_rss::storage::pgsql::PgsqlTopicStorage;
 use news_rss::ServiceConnect;
 use std::sync::Arc;
 use wiremock::matchers::{method, path};
 use wiremock::{Mock, MockServer, ResponseTemplate};
-use news_rss::storage::pgsql::PgsqlTopicStorage;
 
 #[allow(dead_code)]
 const TEST_AMQP_CONSUMER_TAG: &str = "test-news-rss-consumer";

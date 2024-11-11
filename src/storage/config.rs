@@ -6,5 +6,5 @@ use serde::Deserialize;
 #[derive(Clone, Deserialize, Getters)]
 #[getset(get = "pub")]
 pub struct StorageConfig {
-    pgsql: PgsqlTopicStorageConfig
+    pgsql: PgsqlTopicStorageConfig,
 }

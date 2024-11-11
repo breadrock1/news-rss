@@ -10,18 +10,18 @@ use news_rss::publish::pgsql::PgsqlPublisher;
 use news_rss::cache::local::LocalCache;
 use news_rss::config::ServiceConfig;
 use news_rss::crawler::native::NativeCrawler;
+use news_rss::feeds::rss_feeds::config::RssConfig;
 use news_rss::feeds::rss_feeds::RssFeeds;
 use news_rss::feeds::FetchTopic;
 use news_rss::publish::rabbit::RabbitPublisher;
 use news_rss::server::{RssWorker, ServerApp};
+use news_rss::storage::pgsql::PgsqlTopicStorage;
+use news_rss::storage::LoadTopic;
 use news_rss::{logger, server, ServiceConnect};
 use std::collections::HashMap;
 use std::sync::Arc;
 use tokio::net::TcpListener;
 use tower_http::{cors, trace};
-use news_rss::feeds::rss_feeds::config::RssConfig;
-use news_rss::storage::LoadTopic;
-use news_rss::storage::pgsql::PgsqlTopicStorage;
 
 #[tokio::main]
 async fn main() -> Result<(), anyhow::Error> {
@@ -131,7 +131,9 @@ pub async fn build_llm_crawler(config: &ServiceConfig) -> Result<Arc<LlmCrawler>
 }
 
 #[cfg(feature = "storage-pgsql")]
-pub async fn load_topics_from_pgsql(config: &ServiceConfig) -> Result<Vec<RssConfig>, anyhow::Error> {
+pub async fn load_topics_from_pgsql(
+    config: &ServiceConfig,
+) -> Result<Vec<RssConfig>, anyhow::Error> {
     let rss_config = config.topics().rss();
 
     let pgsql_config = config.storage().pgsql();
