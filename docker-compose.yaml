@@ -43,7 +43,7 @@ services:
       - redis
       - pgsql
     ports:
-      - '2895:2895'
+      - '2865:2865'
     volumes:
       - './config:/app/config:ro'
     environment:
