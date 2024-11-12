@@ -4,6 +4,7 @@ use crate::feeds::config::TopicsConfig;
 use crate::logger::LoggerConfig;
 use crate::publish::config::PublishConfig;
 use crate::server::config::ServerConfig;
+use crate::storage::config::StorageConfig;
 
 use config::{Config, ConfigError, Environment, File};
 use getset::Getters;
@@ -21,6 +22,7 @@ pub struct ServiceConfig {
     publish: PublishConfig,
     topics: TopicsConfig,
     crawler: CrawlerConfig,
+    storage: StorageConfig,
 }
 
 impl ServiceConfig {

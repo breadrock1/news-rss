@@ -19,6 +19,7 @@ async fn test_rss_feeds() -> Result<(), anyhow::Error> {
     logger::init_logger(config.logger())?;
 
     let publish = MockRabbitPublisher::connect(config.publish().rmq()).await?;
+    #[allow(unused_variables)]
     let publish = Arc::new(publish);
 
     #[cfg(feature = "publish-offline")]

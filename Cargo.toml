@@ -6,7 +6,8 @@ edition = "2021"
 [features]
 cache-redis = ["dep:redis"]
 publish-offline = ["dep:sqlx"]
-crawler-llm = ["dep:openai_dive", "dep:html2text"]
+storage-pgsql = ["dep:sqlx"]
+crawler-llm = ["dep:openai_dive", "dep:html2text", "dep:html_editor"]
 default = []
 
 test-publish-rabbit = []
@@ -44,6 +45,10 @@ version = "^0.13"
 [dependencies.moka]
 version = "^0.12"
 features = ["future"]
+
+[dependencies.html_editor]
+optional = true
+version = "^0.7"
 
 [dependencies.openai_dive]
 optional = true
