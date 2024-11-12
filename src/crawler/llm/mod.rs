@@ -9,6 +9,9 @@ use crate::crawler::llm::prompt::*;
 use crate::crawler::CrawlerService;
 use crate::ServiceConnect;
 
+use html_editor::operation::Editable;
+use html_editor::operation::Htmlifiable;
+use html_editor::operation::Selector;
 use openai_dive::v1::api::Client;
 use openai_dive::v1::resources::chat::*;
 use std::sync::Arc;
@@ -73,10 +76,30 @@ impl CrawlerService for LlmCrawler {
             .get(url)
             .send()
             .await?
-            .error_for_status()?;
+            .error_for_status()
+            .map_err(|err| {
+                tracing::error!(err=?err, "failed to send request to url: {url}");
+                err
+            })?;
 
         let html_str = response.text().await?;
-        self.scrape(&html_str).await
+        let html_str = match html_editor::parse(&html_str) {
+            Err(err) => {
+                tracing::error!("failed to parse html: {err}");
+                html_str
+            }
+            Ok(mut dom) => dom
+                .remove_by(&Selector::from("nav"))
+                .remove_by(&Selector::from("head"))
+                .remove_by(&Selector::from("header"))
+                .remove_by(&Selector::from("footer"))
+                .trim()
+                .html(),
+        };
+
+        let html_bytes = html_str.as_bytes();
+        let html_str_2 = html2text::from_read(html_bytes, html_bytes.len())?;
+        self.scrape(&html_str_2).await
     }
 }
 
@@ -88,7 +111,7 @@ impl LlmCrawler {
     fn create_system_prompt() -> ChatMessage {
         ChatMessage::System {
             name: Some(SYSTEM_PROMPT_NAME.to_string()),
-            content: ChatMessageContent::Text(SCRAPE_HTML_SYSTEM_PROMPT_AS_TEXT.to_string()),
+            content: ChatMessageContent::Text(SCRAPE_HTML_SYSTEM_PROMPT_SUM.to_string()),
         }
     }
 

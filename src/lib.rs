@@ -5,6 +5,7 @@ pub mod feeds;
 pub mod logger;
 pub mod publish;
 pub mod server;
+pub mod storage;
 
 #[async_trait::async_trait]
 pub trait ServiceConnect {

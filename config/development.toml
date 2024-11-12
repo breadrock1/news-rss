@@ -29,6 +29,13 @@ username = "postgres"
 password = "postgres"
 max_pool_size = 10
 
+[storage.pgsql]
+address = "localhost:5432"
+database = "ai-crawler"
+username = "postgres"
+password = "postgres"
+max_pool_size = 10
+
 [crawler.llm]
 api_key = "sk-no-key-required"
 base_url = "http://localhost:8081/v1"
@@ -37,7 +44,7 @@ base_url = "http://localhost:8081/v1"
 max_retries = 3
 timeout = 100
 interval_secs = 3600
-source_name = "NDTV Worlds News"
+source_name = "NDTV World News"
 target_url = "https://feeds.feedburner.com/ndtvnews-world-news"
 
 # Available rss news sources:
