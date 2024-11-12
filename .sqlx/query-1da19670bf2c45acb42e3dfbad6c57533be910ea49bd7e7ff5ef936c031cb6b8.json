@@ -1,0 +1,58 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n                SELECT * FROM rss_sources\n                WHERE run_at_launch = $1\n            ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 1,
+        "name": "name",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 2,
+        "name": "link",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 3,
+        "name": "run_at_launch",
+        "type_info": "Bool"
+      },
+      {
+        "ordinal": 4,
+        "name": "max_retries",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 5,
+        "name": "timeout",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 6,
+        "name": "interval_secs",
+        "type_info": "Int4"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Bool"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "1da19670bf2c45acb42e3dfbad6c57533be910ea49bd7e7ff5ef936c031cb6b8"
+}

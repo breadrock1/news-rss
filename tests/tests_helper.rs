@@ -13,6 +13,9 @@ use news_rss::crawler::llm::LlmCrawler;
 #[cfg(feature = "publish-offline")]
 use news_rss::publish::pgsql::PgsqlPublisher;
 
+#[cfg(feature = "storage-pgsql")]
+use news_rss::storage::pgsql::PgsqlTopicStorage;
+
 use news_rss::cache::local::LocalCache;
 use news_rss::config::ServiceConfig;
 use news_rss::crawler::native::NativeCrawler;
@@ -66,12 +69,13 @@ pub async fn rabbit_consumer(config: &RabbitConfig) -> Result<(), anyhow::Error>
         )
         .await?;
 
+    let queue_decl_opts = QueueDeclareOptions {
+        durable: true,
+        ..Default::default()
+    };
+
     channel
-        .queue_declare(
-            config.stream_name(),
-            QueueDeclareOptions::default(),
-            FieldTable::default(),
-        )
+        .queue_declare(config.stream_name(), queue_decl_opts, FieldTable::default())
         .await?;
 
     channel
@@ -152,6 +156,16 @@ pub async fn build_pgsql_publish(
 ) -> Result<Arc<PgsqlPublisher>, anyhow::Error> {
     let pgsql_config = config.publish().pgsql();
     let pgsql = PgsqlPublisher::connect(pgsql_config).await?;
+    let pgsql = Arc::new(pgsql);
+    Ok(pgsql)
+}
+
+#[cfg(feature = "storage-pgsql")]
+pub async fn build_pgsql_storage(
+    config: &ServiceConfig,
+) -> Result<Arc<PgsqlTopicStorage>, anyhow::Error> {
+    let pgsql_config = config.storage().pgsql();
+    let pgsql = PgsqlTopicStorage::connect(pgsql_config).await?;
     let pgsql = Arc::new(pgsql);
     Ok(pgsql)
 }
