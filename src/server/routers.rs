@@ -6,19 +6,16 @@ use crate::publish::Publisher;
 use crate::server::errors::ServerError;
 use crate::server::errors::ServerResult;
 use crate::server::errors::Success;
-use crate::server::forms::GetInfoForm;
-use crate::server::forms::GetInfoResponse;
-use crate::server::forms::TerminateWorkerForm;
-use crate::server::forms::{CreateWorkerForm, RssConfigForm};
+use crate::server::forms::*;
 use crate::server::swagger::SwaggerExamples;
 use crate::server::{RssWorker, ServerApp};
+use crate::storage::pgsql::models::PgsqlTopicModel;
+use crate::storage::LoadTopic;
 
-use axum::extract::State;
+use axum::extract::{Path, State};
 use axum::response::IntoResponse;
 use axum::Json;
 use std::sync::Arc;
-
-use super::forms::DeleteWorkerForm;
 
 #[utoipa::path(
     get,
@@ -45,13 +42,14 @@ use super::forms::DeleteWorkerForm;
         ),
     )
 )]
-pub async fn get_workers<P, C, S>(
-    State(state): State<Arc<ServerApp<P, C, S>>>,
+pub async fn get_workers<P, C, S, R>(
+    State(state): State<Arc<ServerApp<P, C, S, R>>>,
 ) -> ServerResult<impl IntoResponse>
 where
     P: Publisher + Sync + Send,
     C: CacheService + Sync + Send,
     S: CrawlerService + Sync + Send,
+    R: LoadTopic + Sync + Send,
 {
     let workers = state.workers();
     let workers_guard = workers.read().await;
@@ -106,14 +104,15 @@ where
         ),
     )
 )]
-pub async fn get_worker_info<P, C, S>(
-    State(state): State<Arc<ServerApp<P, C, S>>>,
+pub async fn get_worker_info<P, C, S, R>(
+    State(state): State<Arc<ServerApp<P, C, S, R>>>,
     Json(form): Json<GetInfoForm>,
 ) -> ServerResult<impl IntoResponse>
 where
     P: Publisher + Sync + Send,
     C: CacheService + Sync + Send,
     S: CrawlerService + Sync + Send,
+    R: LoadTopic + Sync + Send,
 {
     let workers = state.workers();
     let workers_guard = workers.read().await;
@@ -168,14 +167,15 @@ where
         ),
     )
 )]
-pub async fn create_worker<P, C, S>(
-    State(state): State<Arc<ServerApp<P, C, S>>>,
+pub async fn create_worker<P, C, S, R>(
+    State(state): State<Arc<ServerApp<P, C, S, R>>>,
     Json(form): Json<CreateWorkerForm>,
 ) -> ServerResult<impl IntoResponse>
 where
     P: Publisher + Sync + Send + 'static,
     C: CacheService + Sync + Send + 'static,
     S: CrawlerService + Sync + Send + 'static,
+    R: LoadTopic + Sync + Send + 'static,
 {
     let workers = state.workers();
     let mut workers_guard = workers.write().await;
@@ -232,14 +232,15 @@ where
         ),
     )
 )]
-pub async fn restart_worker<P, C, S>(
-    State(state): State<Arc<ServerApp<P, C, S>>>,
+pub async fn restart_worker<P, C, S, R>(
+    State(state): State<Arc<ServerApp<P, C, S, R>>>,
     Json(form): Json<CreateWorkerForm>,
 ) -> ServerResult<impl IntoResponse>
 where
     P: Publisher + Sync + Send + 'static,
     C: CacheService + Sync + Send + 'static,
     S: CrawlerService + Sync + Send + 'static,
+    R: LoadTopic + Sync + Send + 'static,
 {
     let workers = state.workers();
     let mut workers_guard = workers.write().await;
@@ -296,14 +297,15 @@ where
         ),
     )
 )]
-pub async fn terminate_worker<P, C, S>(
-    State(state): State<Arc<ServerApp<P, C, S>>>,
+pub async fn terminate_worker<P, C, S, R>(
+    State(state): State<Arc<ServerApp<P, C, S, R>>>,
     Json(form): Json<TerminateWorkerForm>,
 ) -> ServerResult<impl IntoResponse>
 where
     P: Publisher + Sync + Send,
     C: CacheService + Sync + Send,
     S: CrawlerService + Sync + Send,
+    R: LoadTopic + Sync + Send,
 {
     let workers = state.workers();
     let workers_guard = workers.read().await;
@@ -348,14 +350,15 @@ where
         ),
     )
 )]
-pub async fn delete_worker<P, C, S>(
-    State(state): State<Arc<ServerApp<P, C, S>>>,
+pub async fn delete_worker<P, C, S, R>(
+    State(state): State<Arc<ServerApp<P, C, S, R>>>,
     Json(form): Json<DeleteWorkerForm>,
 ) -> ServerResult<impl IntoResponse>
 where
     P: Publisher + Sync + Send,
     C: CacheService + Sync + Send,
     S: CrawlerService + Sync + Send,
+    R: LoadTopic + Sync + Send,
 {
     let workers = state.workers();
     let mut workers_guard = workers.write().await;
@@ -381,4 +384,241 @@ where
     let msg = format!("worker {worker_name} is launched. Use force flag to terminate");
     tracing::warn!("{}", &msg);
     Err(ServerError::Launched(msg))
+}
+
+#[utoipa::path(
+    get,
+    path = "/sources/all",
+    tag = "sources",
+    responses(
+        (
+            status = 200,
+            description = "Successful",
+            body = Vec<GetSourcesResponse>,
+            example = json!(vec![GetSourcesResponse::example(None)]),
+        ),
+        (
+            status = 400,
+            description = "Failed to load all source",
+            body = ServerError,
+            example = json!(ServerError::example(Some("failed to load all source".to_string()))),
+        ),
+        (
+            status = 503,
+            description = "Server does not available",
+            body = ServerError,
+            example = json!(ServerError::example(None)),
+        ),
+    )
+)]
+pub async fn all_sources<P, C, S, R>(
+    State(state): State<Arc<ServerApp<P, C, S, R>>>,
+) -> ServerResult<impl IntoResponse>
+where
+    P: Publisher + Sync + Send,
+    C: CacheService + Sync + Send,
+    S: CrawlerService + Sync + Send,
+    R: LoadTopic<Topic = PgsqlTopicModel, Error = sqlx::Error> + Sync + Send,
+{
+    let storage = state.storage();
+    let sources = storage
+        .load_all()
+        .await
+        .map_err(|err| ServerError::InternalError(err.to_string()))?
+        .into_iter()
+        .map(GetSourcesResponse::from)
+        .collect::<Vec<_>>();
+
+    Ok(Json(sources))
+}
+
+#[utoipa::path(
+    put,
+    path = "/sources/add",
+    tag = "sources",
+    request_body(
+        content = CreateSourceForm,
+        example = json!(CreateSourceForm::example(None)),
+    ),
+    responses(
+        (
+            status = 200,
+            description = "Successful",
+            body = Vec<Success>,
+            example = json!(Success::example(None)),
+        ),
+        (
+            status = 400,
+            description = "Failed to create source",
+            body = ServerError,
+            example = json!(ServerError::example(Some("failed to create source".to_string()))),
+        ),
+        (
+            status = 503,
+            description = "Server does not available",
+            body = ServerError,
+            example = json!(ServerError::example(None)),
+        ),
+    )
+)]
+pub async fn add_source<P, C, S, R>(
+    State(state): State<Arc<ServerApp<P, C, S, R>>>,
+    Json(form): Json<CreateSourceForm>,
+) -> ServerResult<impl IntoResponse>
+where
+    P: Publisher + Sync + Send,
+    C: CacheService + Sync + Send,
+    S: CrawlerService + Sync + Send,
+    R: LoadTopic<Topic = PgsqlTopicModel, Error = sqlx::Error> + Sync + Send,
+{
+    let storage = state.storage();
+    storage
+        .add_source(&form.into())
+        .await
+        .map_err(|err| ServerError::InternalError(err.to_string()))?;
+
+    Ok(Json(Success::default()))
+}
+
+#[utoipa::path(
+    delete,
+    path = "/sources/{source_id}",
+    tag = "sources",
+    responses(
+        (
+            status = 200,
+            description = "Successful",
+            body = Vec<Success>,
+            example = json!(Success::example(None)),
+        ),
+        (
+            status = 400,
+            description = "Failed to remove source",
+            body = ServerError,
+            example = json!(ServerError::example(Some("failed to remove source".to_string()))),
+        ),
+        (
+            status = 503,
+            description = "Server does not available",
+            body = ServerError,
+            example = json!(ServerError::example(None)),
+        ),
+    )
+)]
+pub async fn remove_source<P, C, S, R>(
+    State(state): State<Arc<ServerApp<P, C, S, R>>>,
+    Path(source_id): Path<i32>,
+) -> ServerResult<impl IntoResponse>
+where
+    P: Publisher + Sync + Send,
+    C: CacheService + Sync + Send,
+    S: CrawlerService + Sync + Send,
+    R: LoadTopic<TopicId = i32, Topic = PgsqlTopicModel, Error = sqlx::Error> + Sync + Send,
+{
+    let storage = state.storage();
+    storage
+        .remove_source(source_id)
+        .await
+        .map_err(|err| ServerError::InternalError(err.to_string()))?;
+
+    Ok(Json(Success::default()))
+}
+
+#[utoipa::path(
+    post,
+    path = "/sources/search",
+    tag = "sources",
+    request_body(
+        content = SearchSourcesForm,
+        example = json!(SearchSourcesForm::example(None)),
+    ),
+    responses(
+        (
+            status = 200,
+            description = "Successful",
+            body = Vec<GetSourcesResponse>,
+            example = json!(vec![GetSourcesResponse::example(None)]),
+        ),
+        (
+            status = 400,
+            description = "Failed to search source",
+            body = ServerError,
+            example = json!(ServerError::example(Some("failed to search source".to_string()))),
+        ),
+        (
+            status = 503,
+            description = "Server does not available",
+            body = ServerError,
+            example = json!(ServerError::example(None)),
+        ),
+    )
+)]
+pub async fn search_sources<P, C, S, R>(
+    State(state): State<Arc<ServerApp<P, C, S, R>>>,
+    Json(form): Json<SearchSourcesForm>,
+) -> ServerResult<impl IntoResponse>
+where
+    P: Publisher + Sync + Send,
+    C: CacheService + Sync + Send,
+    S: CrawlerService + Sync + Send,
+    R: LoadTopic<Topic = PgsqlTopicModel, Error = sqlx::Error> + Sync + Send,
+{
+    let storage = state.storage();
+    let founded_topics = storage
+        .search_source(form.query())
+        .await
+        .map_err(|err| ServerError::InternalError(err.to_string()))?
+        .into_iter()
+        .map(GetSourcesResponse::from)
+        .collect::<Vec<_>>();
+
+    Ok(Json(founded_topics))
+}
+
+#[utoipa::path(
+    patch,
+    path = "/sources/update",
+    tag = "sources",
+    request_body(
+        content = CreateSourceForm,
+        example = json!(CreateSourceForm::example(None)),
+    ),
+    responses(
+        (
+            status = 200,
+            description = "Successful",
+            body = Success,
+            example = json!(Success::example(None)),
+        ),
+        (
+            status = 400,
+            description = "Failed to update source",
+            body = ServerError,
+            example = json!(ServerError::example(Some("failed to update source".to_string()))),
+        ),
+        (
+            status = 503,
+            description = "Server does not available",
+            body = ServerError,
+            example = json!(ServerError::example(None)),
+        ),
+    )
+)]
+pub async fn update_source<P, C, S, R>(
+    State(state): State<Arc<ServerApp<P, C, S, R>>>,
+    Json(form): Json<CreateSourceForm>,
+) -> ServerResult<impl IntoResponse>
+where
+    P: Publisher + Sync + Send,
+    C: CacheService + Sync + Send,
+    S: CrawlerService + Sync + Send,
+    R: LoadTopic<Topic = PgsqlTopicModel, Error = sqlx::Error> + Sync + Send,
+{
+    let storage = state.storage();
+    storage
+        .update_source(&form.into())
+        .await
+        .map_err(|err| ServerError::InternalError(err.to_string()))?;
+
+    Ok(Json(Success::default()))
 }

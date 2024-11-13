@@ -1,9 +1,10 @@
 use crate::feeds::rss_feeds::config::RssConfig;
 
-use serde::Deserialize;
+use derive_builder::Builder;
+use serde::{Deserialize, Serialize};
 use sqlx::{Decode, FromRow};
 
-#[derive(FromRow, Deserialize, Decode)]
+#[derive(Builder, FromRow, Deserialize, Serialize, Decode)]
 pub struct PgsqlTopicModel {
     pub id: i32,
     pub name: String,
@@ -24,5 +25,11 @@ impl From<PgsqlTopicModel> for RssConfig {
             .interval_secs(value.interval_secs.to_owned() as u64)
             .build()
             .unwrap()
+    }
+}
+
+impl PgsqlTopicModel {
+    pub fn builder() -> PgsqlTopicModelBuilder {
+        PgsqlTopicModelBuilder::default()
     }
 }
