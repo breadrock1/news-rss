@@ -1,5 +1,6 @@
 use crate::feeds::rss_feeds::config::RssConfig;
 use crate::server::swagger::SwaggerExamples;
+use crate::storage::pgsql::models::PgsqlTopicModel;
 
 use derive_builder::Builder;
 use getset::{CopyGetters, Getters};
@@ -179,6 +180,119 @@ impl SwaggerExamples for GetInfoResponse {
             source_name: "BBC".to_string(),
             is_launched: false,
             configuration: Some(RssConfigForm::example(None)),
+        }
+    }
+}
+
+#[derive(Builder, Deserialize, Serialize, IntoParams, ToSchema)]
+pub struct GetSourcesResponse {
+    id: i32,
+    #[schema(example = "BBC")]
+    name: String,
+    #[schema(example = "https://bbc-news.com/rss.xml")]
+    link: String,
+    #[schema(example = false)]
+    run_at_launch: bool,
+    #[schema(example = 3)]
+    max_retries: i32,
+    #[schema(example = 100)]
+    timeout: i32,
+    #[schema(example = 3600)]
+    interval_secs: i32,
+}
+
+impl From<PgsqlTopicModel> for GetSourcesResponse {
+    fn from(value: PgsqlTopicModel) -> Self {
+        GetSourcesResponseBuilder::default()
+            .id(value.id)
+            .name(value.name.to_owned())
+            .link(value.link.to_owned())
+            .run_at_launch(value.run_at_launch)
+            .max_retries(value.max_retries)
+            .timeout(value.timeout)
+            .interval_secs(value.interval_secs)
+            .build()
+            .unwrap()
+    }
+}
+
+impl SwaggerExamples for GetSourcesResponse {
+    type Example = Self;
+
+    fn example(_value: Option<String>) -> Self::Example {
+        GetSourcesResponseBuilder::default()
+            .id(1)
+            .name("BBC".to_owned())
+            .link("https://bbc-news.com/rss.xml".to_owned())
+            .run_at_launch(true)
+            .max_retries(3)
+            .timeout(100)
+            .interval_secs(3600)
+            .build()
+            .unwrap()
+    }
+}
+
+#[derive(Builder, Deserialize, Serialize, IntoParams, ToSchema)]
+pub struct CreateSourceForm {
+    #[schema(example = "BBC")]
+    name: String,
+    #[schema(example = "https://bbc-news.com/rss.xml")]
+    link: String,
+    #[schema(example = false)]
+    run_at_launch: bool,
+    #[schema(example = 3)]
+    max_retries: i32,
+    #[schema(example = 100)]
+    timeout: i32,
+    #[schema(example = 3600)]
+    interval_secs: i32,
+}
+
+impl From<CreateSourceForm> for PgsqlTopicModel {
+    fn from(value: CreateSourceForm) -> Self {
+        PgsqlTopicModel::builder()
+            .id(0)
+            .name(value.name.to_owned())
+            .link(value.link.to_owned())
+            .run_at_launch(value.run_at_launch)
+            .max_retries(value.max_retries)
+            .timeout(value.timeout)
+            .interval_secs(value.interval_secs)
+            .build()
+            .unwrap()
+    }
+}
+
+impl SwaggerExamples for CreateSourceForm {
+    type Example = Self;
+
+    fn example(_value: Option<String>) -> Self::Example {
+        CreateSourceFormBuilder::default()
+            .name("BBC".to_owned())
+            .link("https://bbc-news.com/rss.xml".to_owned())
+            .run_at_launch(true)
+            .max_retries(3)
+            .timeout(100)
+            .interval_secs(3600)
+            .build()
+            .unwrap()
+    }
+}
+
+#[derive(Getters, Deserialize, Serialize, IntoParams, ToSchema)]
+#[getset(get = "pub")]
+pub struct SearchSourcesForm {
+    #[schema(example = "World")]
+    query: String,
+}
+
+impl SwaggerExamples for SearchSourcesForm {
+    type Example = Self;
+
+    fn example(_value: Option<String>) -> Self::Example {
+        SearchSourcesForm {
+            query: "World".to_string(),
         }
     }
 }

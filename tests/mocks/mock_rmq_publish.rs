@@ -4,7 +4,7 @@ use news_rss::publish::Publisher;
 use news_rss::ServiceConnect;
 
 #[derive(Clone)]
-pub struct MockRabbitPublisher {}
+pub struct MockRabbitPublisher;
 
 #[async_trait::async_trait]
 impl ServiceConnect for MockRabbitPublisher {
