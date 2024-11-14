@@ -7,19 +7,16 @@ use news_rss::crawler::llm::LlmCrawler;
 #[cfg(feature = "publish-offline")]
 use news_rss::publish::pgsql::PgsqlPublisher;
 
-#[cfg(feature = "storage-pgsql")]
-use news_rss::storage::pgsql;
-
-#[allow(unused_imports)]
-use news_rss::feeds::rss_feeds::config::RssConfig;
-
 use news_rss::cache::local::LocalCache;
 use news_rss::config::ServiceConfig;
 use news_rss::crawler::native::NativeCrawler;
+use news_rss::feeds::rss_feeds::config::RssConfig;
 use news_rss::feeds::rss_feeds::RssFeeds;
 use news_rss::feeds::FetchTopic;
 use news_rss::publish::rabbit::RabbitPublisher;
 use news_rss::server::{RssWorker, ServerApp};
+use news_rss::storage::pgsql::PgsqlTopicStorage;
+use news_rss::storage::LoadTopic;
 use news_rss::{logger, server, ServiceConnect};
 use std::collections::HashMap;
 use std::sync::Arc;
@@ -46,10 +43,11 @@ async fn main() -> Result<(), anyhow::Error> {
     #[cfg(feature = "crawler-llm")]
     let crawler = build_llm_crawler(&config).await?;
 
-    #[allow(unused_variables)]
-    let rss_config = [config.topics().rss()];
-    #[cfg(feature = "storage-pgsql")]
-    let rss_config = load_topics_from_pgsql(&config).await?;
+    let rss_config = config.topics().rss();
+    let pgsql_config = config.storage().pgsql();
+    let storage = PgsqlTopicStorage::connect(pgsql_config).await?;
+    let rss_config = load_topics_from_pgsql(&rss_config, &storage).await?;
+    let pg_storage = Arc::new(storage);
 
     let rss_workers = rss_config
         .into_iter()
@@ -67,7 +65,7 @@ async fn main() -> Result<(), anyhow::Error> {
         .collect::<HashMap<String, RssWorker>>();
 
     let listener = TcpListener::bind(config.server().address()).await?;
-    let server_app = ServerApp::new(rss_workers, publish, cache, crawler);
+    let server_app = ServerApp::new(rss_workers, publish, cache, crawler, pg_storage);
     let trace_layer = trace::TraceLayer::new_for_http()
         .make_span_with(trace::DefaultMakeSpan::new().level(tracing::Level::INFO))
         .on_response(trace::DefaultOnResponse::new().level(tracing::Level::INFO));
@@ -133,25 +131,24 @@ pub async fn build_llm_crawler(config: &ServiceConfig) -> Result<Arc<LlmCrawler>
     Ok(crawler)
 }
 
-#[cfg(feature = "storage-pgsql")]
 pub async fn load_topics_from_pgsql(
-    config: &ServiceConfig,
+    rss_config: &RssConfig,
+    storage: &PgsqlTopicStorage,
 ) -> Result<Vec<RssConfig>, anyhow::Error> {
-    use news_rss::storage::LoadTopic;
-
-    let rss_config = config.topics().rss();
-
-    let pgsql_config = config.storage().pgsql();
-    let storage = pgsql::PgsqlTopicStorage::connect(pgsql_config).await?;
     let mut topics = storage
         .load_at_launch()
-        .await?
+        .await
+        .map_err(|err| {
+            tracing::error!(err=?err, "failed to load topics from pgsql");
+            err
+        })
+        .unwrap_or_default()
         .into_iter()
         .map(RssConfig::from)
         .map(|it: RssConfig| (it.target_url().to_owned(), it))
         .collect::<HashMap<String, RssConfig>>();
 
-    topics.insert(rss_config.target_url().to_owned(), rss_config);
+    topics.insert(rss_config.target_url().to_owned(), rss_config.to_owned());
     let topics = topics.into_values().collect();
     Ok(topics)
 }

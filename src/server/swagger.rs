@@ -30,6 +30,11 @@ pub fn init_swagger() -> SwaggerUi {
         restart_worker,
         terminate_worker,
         delete_worker,
+        all_sources,
+        add_source,
+        remove_source,
+        update_source,
+        search_sources,
     ),
     components(
         schemas(
@@ -38,6 +43,9 @@ pub fn init_swagger() -> SwaggerUi {
             CreateWorkerForm,
             DeleteWorkerForm,
             TerminateWorkerForm,
+            CreateSourceForm,
+            GetSourcesResponse,
+            SearchSourcesForm,
         ),
     ),
 )]

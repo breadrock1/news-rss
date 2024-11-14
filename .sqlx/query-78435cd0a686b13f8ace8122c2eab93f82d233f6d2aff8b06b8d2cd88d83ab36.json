@@ -1,0 +1,20 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n                UPDATE rss_sources\n                SET name = $2,\n                    link = $3,\n                    run_at_launch = $4,\n                    max_retries = $5,\n                    timeout = $6,\n                    interval_secs = $7\n                WHERE id = $1\n            ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int4",
+        "Text",
+        "Text",
+        "Bool",
+        "Int4",
+        "Int4",
+        "Int4"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "78435cd0a686b13f8ace8122c2eab93f82d233f6d2aff8b06b8d2cd88d83ab36"
+}
