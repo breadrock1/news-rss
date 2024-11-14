@@ -5,8 +5,7 @@ edition = "2021"
 
 [features]
 cache-redis = ["dep:redis"]
-publish-offline = ["dep:sqlx"]
-storage-pgsql = ["dep:sqlx"]
+publish-offline = []
 crawler-llm = ["dep:openai_dive", "dep:html2text", "dep:html_editor"]
 default = []
 
@@ -68,7 +67,6 @@ version = "^1.0"
 features = ["derive", "serde_derive"]
 
 [dependencies.sqlx]
-optional = true
 version = "^0.7"
 features = ["postgres", "runtime-tokio", "chrono"]
 

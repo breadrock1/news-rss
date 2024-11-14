@@ -13,14 +13,12 @@ use news_rss::crawler::llm::LlmCrawler;
 #[cfg(feature = "publish-offline")]
 use news_rss::publish::pgsql::PgsqlPublisher;
 
-#[cfg(feature = "storage-pgsql")]
-use news_rss::storage::pgsql::PgsqlTopicStorage;
-
 use news_rss::cache::local::LocalCache;
 use news_rss::config::ServiceConfig;
 use news_rss::crawler::native::NativeCrawler;
 use news_rss::publish::rabbit::config::RabbitConfig;
 use news_rss::publish::rabbit::RabbitPublisher;
+use news_rss::storage::pgsql::PgsqlTopicStorage;
 use news_rss::ServiceConnect;
 use std::sync::Arc;
 use wiremock::matchers::{method, path};
@@ -160,7 +158,6 @@ pub async fn build_pgsql_publish(
     Ok(pgsql)
 }
 
-#[cfg(feature = "storage-pgsql")]
 pub async fn build_pgsql_storage(
     config: &ServiceConfig,
 ) -> Result<Arc<PgsqlTopicStorage>, anyhow::Error> {
