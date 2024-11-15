@@ -149,7 +149,7 @@ where
     async fn extract_item(&self, item: &rss::Item) -> Result<RssResponse, anyhow::Error> {
         let guid = item.guid().ok_or(anyhow::Error::msg("empty guid"))?;
         let title = item.title().ok_or(anyhow::Error::msg("empty title"))?;
-        let link = item.link().ok_or(anyhow::Error::msg("empty link"))?;
+        let link = item.link().unwrap_or(guid.value());
 
         let source = Url::parse(link)
             .map(|it| it.domain().map(|t| t.to_string()))
@@ -163,15 +163,12 @@ where
             Some(data) => self.clear_html_tags(data)?,
             None => {
                 #[allow(unused_variables)]
-                let data = description;
+                let data = description.to_string();
 
                 #[cfg(feature = "crawler-llm")]
-                let data = link;
+                let data = self.scrape(link).await?;
 
-                self.crawler()
-                    .scrape_by_url(data)
-                    .await
-                    .map_err(|err| anyhow::Error::msg(err.to_string()))?
+                data
             }
         };
 
@@ -203,5 +200,15 @@ where
         let regex = Regex::new(r#"<[^>]*>"#)?;
         let result_text = regex.replace_all(content, "").to_string();
         Ok(result_text)
+    }
+
+    #[cfg(feature = "crawler-llm")]
+    async fn scrape(&self, link: &str) -> Result<String, anyhow::Error> {
+        let result = self.crawler()
+            .scrape_by_url(link)
+            .await
+            .map_err(|err| anyhow::Error::msg(err.to_string()))?;
+
+        Ok(result)
     }
 }
