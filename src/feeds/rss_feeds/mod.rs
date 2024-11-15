@@ -204,7 +204,8 @@ where
 
     #[cfg(feature = "crawler-llm")]
     async fn scrape(&self, link: &str) -> Result<String, anyhow::Error> {
-        let result = self.crawler()
+        let result = self
+            .crawler()
             .scrape_by_url(link)
             .await
             .map_err(|err| anyhow::Error::msg(err.to_string()))?;
