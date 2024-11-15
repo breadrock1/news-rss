@@ -3,6 +3,7 @@ mod tests_helper;
 
 use mocks::mock_rmq_publish::MockRabbitPublisher;
 use news_rss::config::ServiceConfig;
+use news_rss::feeds::rss_feeds::config::RssConfig;
 use news_rss::feeds::rss_feeds::RssFeeds;
 use news_rss::feeds::FetchTopic;
 use news_rss::server::RssWorker;
@@ -35,7 +36,14 @@ async fn test_rss_feeds() -> Result<(), anyhow::Error> {
     #[cfg(feature = "crawler-llm")]
     let crawler = tests_helper::build_llm_crawler(&config).await?;
 
-    let rss_config = vec![config.topics().rss()];
+    let rss_config = vec![RssConfig::builder()
+        .source_name("NDTV World News".to_owned())
+        .target_url("https://feeds.feedburner.com/ndtvnews-world-news".to_owned())
+        .max_retries(3)
+        .timeout(10)
+        .interval_secs(5)
+        .build()?];
+
     let _ = rss_config
         .into_iter()
         .filter_map(|it| RssFeeds::new(it, publish.clone(), cache.clone(), crawler.clone()).ok())
