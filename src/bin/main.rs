@@ -43,10 +43,9 @@ async fn main() -> Result<(), anyhow::Error> {
     #[cfg(feature = "crawler-llm")]
     let crawler = build_llm_crawler(&config).await?;
 
-    let rss_config = config.topics().rss();
     let pgsql_config = config.storage().pgsql();
     let storage = PgsqlTopicStorage::connect(pgsql_config).await?;
-    let rss_config = load_topics_from_pgsql(&rss_config, &storage).await?;
+    let rss_config = load_topics_from_pgsql(&storage).await?;
     let pg_storage = Arc::new(storage);
 
     let rss_workers = rss_config
@@ -132,10 +131,9 @@ pub async fn build_llm_crawler(config: &ServiceConfig) -> Result<Arc<LlmCrawler>
 }
 
 pub async fn load_topics_from_pgsql(
-    rss_config: &RssConfig,
     storage: &PgsqlTopicStorage,
 ) -> Result<Vec<RssConfig>, anyhow::Error> {
-    let mut topics = storage
+    let topics = storage
         .load_at_launch()
         .await
         .map_err(|err| {
@@ -148,7 +146,6 @@ pub async fn load_topics_from_pgsql(
         .map(|it: RssConfig| (it.target_url().to_owned(), it))
         .collect::<HashMap<String, RssConfig>>();
 
-    topics.insert(rss_config.target_url().to_owned(), rss_config.to_owned());
     let topics = topics.into_values().collect();
     Ok(topics)
 }
