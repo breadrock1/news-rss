@@ -11,6 +11,7 @@ expired_secs = 10368000
 address = "redis://redis:6379"
 username = "redis"
 password = "redis"
+expired_secs = 10368000
 
 [publish.rmq]
 address = "amqp://rabbitmq:5672"
@@ -38,10 +39,3 @@ max_pool_size = 10
 [crawler.llm]
 api_key = "sk-no-key-required"
 base_url = "http://llm:8081/v1"
-
-[topics.rss]
-max_retries = 3
-timeout = 100
-interval_secs = 3600
-source_name = "NDTV World News"
-target_url = "https://feeds.feedburner.com/ndtvnews-world-news"
