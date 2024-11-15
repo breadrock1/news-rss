@@ -39,18 +39,3 @@ max_pool_size = 10
 [crawler.llm]
 api_key = "sk-no-key-required"
 base_url = "http://localhost:8081/v1"
-
-[topics.rss]
-max_retries = 3
-timeout = 100
-interval_secs = 3600
-source_name = "NDTV World News"
-target_url = "https://feeds.feedburner.com/ndtvnews-world-news"
-
-# Available rss news sources:
-#target_url = "https://feeds.skynews.com/feeds/rss/world.xml"
-#target_url = "https://media.rss.com/ukrainewatch/feed.xml"
-#target_url = "https://feeds.feedburner.com/pri/theworld"
-#target_url = "https://www.mnnonline.org/rss/countries/ukr.xml"
-#target_url = "https://www.wdiy.org/podcast/the-jennings-report/rss.xml"
-#target_url = "http://feeds.feedburner.com/NewsHourHeadlinesPodcast"
