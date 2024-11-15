@@ -1,6 +1,5 @@
 use crate::cache::config::CacheConfig;
 use crate::crawler::config::CrawlerConfig;
-use crate::feeds::config::TopicsConfig;
 use crate::logger::LoggerConfig;
 use crate::publish::config::PublishConfig;
 use crate::server::config::ServerConfig;
@@ -20,7 +19,6 @@ pub struct ServiceConfig {
     server: ServerConfig,
     cache: CacheConfig,
     publish: PublishConfig,
-    topics: TopicsConfig,
     crawler: CrawlerConfig,
     storage: StorageConfig,
 }
