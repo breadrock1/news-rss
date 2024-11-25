@@ -8,7 +8,6 @@ use crate::publish::Publisher;
 use crate::ServiceConnect;
 
 use lapin::options::{BasicPublishOptions, ExchangeDeclareOptions};
-use lapin::options::{QueueBindOptions, QueueDeclareOptions};
 use lapin::types::FieldTable;
 use lapin::{BasicProperties, ConnectionProperties, ExchangeKind};
 use lapin::{Channel, Connection};
@@ -38,32 +37,16 @@ impl ServiceConnect for RabbitPublisher {
         let channel = connection.create_channel().await?;
 
         let exchange_opts = ExchangeDeclareOptions {
-            nowait: true,
+            nowait: config.no_wait(),
+            durable: config.durable(),
             ..Default::default()
         };
+
         channel
             .exchange_declare(
                 config.exchange(),
-                ExchangeKind::Direct,
+                ExchangeKind::Fanout,
                 exchange_opts,
-                FieldTable::default(),
-            )
-            .await?;
-
-        let queue_decl_opts = QueueDeclareOptions {
-            durable: true,
-            ..Default::default()
-        };
-        channel
-            .queue_declare(config.stream_name(), queue_decl_opts, FieldTable::default())
-            .await?;
-
-        channel
-            .queue_bind(
-                config.stream_name(),
-                config.exchange(),
-                config.routing_key(),
-                QueueBindOptions::default(),
                 FieldTable::default(),
             )
             .await?;
@@ -82,26 +65,32 @@ impl Publisher for RabbitPublisher {
     type Error = RabbitPublishError;
 
     async fn publish(&self, news: &PublishNews) -> Result<(), Self::Error> {
+        let exchange = self.config.exchange();
+        let routing = self.config.routing_key();
         let bytes = serde_json::to_vec(&news)?;
         let pub_opts = BasicPublishOptions {
             mandatory: true,
             immediate: false,
         };
-        let pub_props = BasicProperties::default();
 
         let confirm = self
             .channel
             .basic_publish(
-                self.config.exchange(),
-                self.config.routing_key(),
+                exchange,
+                routing,
                 pub_opts,
                 bytes.as_slice(),
-                pub_props,
+                BasicProperties::default(),
             )
             .await?
             .await?;
 
-        tracing::info!("rabbit confirm is: {confirm:?}");
+        tracing::info!(
+            exchange=exchange,
+            routing=routing,
+            confirm=?confirm,
+            "rabbit confirmed"
+        );
 
         Ok(())
     }

@@ -13,6 +13,9 @@ use std::sync::Arc;
 use std::time::Duration;
 
 const TEST_TIME_EXECUTION: u64 = 5;
+const TEST_RMQ_QUEUE_NAME: &str = "news-rss";
+const TEST_SOURCE_NAME: &str = "NDTV World News";
+const TEST_TARGET_URL: &str = "https://feeds.feedburner.com/ndtvnews-world-news";
 
 #[tokio::test]
 async fn test_rss_feeds() -> Result<(), anyhow::Error> {
@@ -37,8 +40,8 @@ async fn test_rss_feeds() -> Result<(), anyhow::Error> {
     let crawler = tests_helper::build_llm_crawler(&config).await?;
 
     let rss_config = vec![RssConfig::builder()
-        .source_name("NDTV World News".to_owned())
-        .target_url("https://feeds.feedburner.com/ndtvnews-world-news".to_owned())
+        .source_name(TEST_SOURCE_NAME.to_owned())
+        .target_url(TEST_TARGET_URL.to_owned())
         .max_retries(3)
         .timeout(10)
         .interval_secs(5)
@@ -60,7 +63,7 @@ async fn test_rss_feeds() -> Result<(), anyhow::Error> {
         .collect::<HashMap<String, RssWorker>>();
 
     #[cfg(feature = "test-publish-rabbit")]
-    let _ = tests_helper::rabbit_consumer(config.publish().rmq()).await?;
+    let _ = tests_helper::rabbit_consumer(TEST_RMQ_QUEUE_NAME, config.publish().rmq()).await?;
 
     tokio::time::sleep(Duration::from_secs(TEST_TIME_EXECUTION)).await;
 

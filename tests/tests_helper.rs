@@ -49,46 +49,38 @@ pub async fn create_llm_completion_route(mock: &MockServer, url: &str, http_meth
 #[allow(dead_code)]
 #[allow(unused_assignments)]
 #[allow(unused_variables)]
-pub async fn rabbit_consumer(config: &RabbitConfig) -> Result<(), anyhow::Error> {
+pub async fn rabbit_consumer(queue: &str, config: &RabbitConfig) -> Result<(), anyhow::Error> {
     let conn_props = ConnectionProperties::default();
     let connection = Connection::connect(config.address(), conn_props).await?;
     let channel = connection.create_channel().await?;
 
-    let exchange_opts = ExchangeDeclareOptions {
-        nowait: true,
-        ..Default::default()
-    };
-    channel
-        .exchange_declare(
-            config.exchange(),
-            ExchangeKind::Direct,
-            exchange_opts,
-            FieldTable::default(),
-        )
-        .await?;
-
     let queue_decl_opts = QueueDeclareOptions {
-        durable: true,
+        durable: config.durable(),
+        nowait: config.no_wait(),
         ..Default::default()
     };
 
     channel
-        .queue_declare(config.stream_name(), queue_decl_opts, FieldTable::default())
+        .queue_declare(queue, queue_decl_opts, FieldTable::default())
         .await?;
+
+    let queue_bind_opts = QueueBindOptions {
+        nowait: config.no_wait(),
+    };
 
     channel
         .queue_bind(
-            config.stream_name(),
+            queue,
             config.exchange(),
             config.routing_key(),
-            QueueBindOptions::default(),
+            queue_bind_opts,
             FieldTable::default(),
         )
         .await?;
 
     let consumer = channel
         .basic_consume(
-            config.stream_name(),
+            queue,
             TEST_AMQP_CONSUMER_TAG,
             BasicConsumeOptions::default(),
             FieldTable::default(),
@@ -114,7 +106,7 @@ pub async fn rabbit_consumer(config: &RabbitConfig) -> Result<(), anyhow::Error>
         delivery
             .ack(BasicAckOptions::default())
             .await
-            .expect("Failed to ack send_webhook_event message");
+            .expect("failed to ack send_webhook_event message");
     });
 
     counter += 1;
