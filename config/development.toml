@@ -17,10 +17,10 @@ expired_secs = 360
 address = "amqp://localhost:5672"
 username = "rmq"
 password = "rmq"
-stream_name = "news-rss-stream"
 exchange = "news-rss-exchange"
 routing_key = "news-rss-routing"
-capacity_gb = 1
+no_wait = true
+durable = false
 
 [publish.pgsql]
 address = "localhost:5432"
