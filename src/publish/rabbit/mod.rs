@@ -8,7 +8,6 @@ use crate::publish::Publisher;
 use crate::ServiceConnect;
 
 use lapin::options::{BasicPublishOptions, ExchangeDeclareOptions};
-use lapin::options::{QueueBindOptions, QueueDeclareOptions};
 use lapin::types::FieldTable;
 use lapin::{BasicProperties, ConnectionProperties, ExchangeKind};
 use lapin::{Channel, Connection};
@@ -86,7 +85,12 @@ impl Publisher for RabbitPublisher {
             .await?
             .await?;
 
-        tracing::info!(exchange=exchange, routing_key=routing, "rabbit confirm: {confirm:?}");
+        tracing::info!(
+            exchange=exchange,
+            routing=routing,
+            confirm=?confirm,
+            "rabbit confirmed"
+        );
 
         Ok(())
     }
