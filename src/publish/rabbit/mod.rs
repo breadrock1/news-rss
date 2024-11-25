@@ -38,8 +38,8 @@ impl ServiceConnect for RabbitPublisher {
         let channel = connection.create_channel().await?;
 
         let exchange_opts = ExchangeDeclareOptions {
-            nowait: true,
-            durable: false,
+            nowait: config.no_wait(),
+            durable: config.durable(),
             ..Default::default()
         };
 
