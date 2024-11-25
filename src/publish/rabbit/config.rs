@@ -7,10 +7,12 @@ pub struct RabbitConfig {
     address: String,
     username: String,
     password: String,
-    stream_name: String,
     exchange: String,
     routing_key: String,
     #[getset(skip)]
     #[getset(get_copy = "pub")]
-    capacity_gb: u64,
+    no_wait: bool,
+    #[getset(skip)]
+    #[getset(get_copy = "pub")]
+    durable: bool,
 }
