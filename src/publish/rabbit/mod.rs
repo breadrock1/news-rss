@@ -37,8 +37,8 @@ impl ServiceConnect for RabbitPublisher {
         let channel = connection.create_channel().await?;
 
         let exchange_opts = ExchangeDeclareOptions {
-            nowait: true,
-            durable: false,
+            nowait: config.no_wait(),
+            durable: config.durable(),
             ..Default::default()
         };
 
@@ -86,9 +86,10 @@ impl Publisher for RabbitPublisher {
             .await?;
 
         tracing::info!(
-            exchange = exchange,
-            routing_key = routing,
-            "rabbit confirm: {confirm:?}"
+            exchange=exchange,
+            routing=routing,
+            confirm=?confirm,
+            "rabbit confirmed"
         );
 
         Ok(())
