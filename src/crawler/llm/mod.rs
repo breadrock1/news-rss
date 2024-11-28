@@ -65,7 +65,7 @@ impl CrawlerService for LlmCrawler {
         match retriever::extract_semantic_blocks(&content) {
             Ok(extracted) => Ok(extracted),
             Err(err) => {
-                tracing::error!("failed to extract semantic blocks from llm: {err:#?}");
+                tracing::error!(err=?err, "failed to extract semantic blocks from llm");
                 Ok(content)
             }
         }
@@ -78,14 +78,14 @@ impl CrawlerService for LlmCrawler {
             .await?
             .error_for_status()
             .map_err(|err| {
-                tracing::error!(err=?err, "failed to send request to url: {url}");
+                tracing::error!(err=?err, url=url, "failed to send request to url");
                 err
             })?;
 
         let html_str = response.text().await?;
         let html_str = match html_editor::parse(&html_str) {
             Err(err) => {
-                tracing::error!("failed to parse html: {err}");
+                tracing::error!(err = err, "failed to parse html");
                 html_str
             }
             Ok(mut dom) => dom

@@ -11,7 +11,7 @@ use crate::feeds::FetchTopic;
 use crate::publish::models::PublishNews;
 use crate::publish::Publisher;
 
-use chrono::NaiveDateTime;
+use chrono::{NaiveDateTime, Utc};
 use getset::{CopyGetters, Getters};
 use regex::Regex;
 use reqwest::Url;
@@ -79,13 +79,13 @@ where
                 Ok(channel) => {
                     let topic = &channel.title().to_string();
                     if let Err(err) = self.processing_event(channel).await {
-                        tracing::error!("{topic}: failed while processing rss event: {err:#?}");
+                        tracing::error!(err=?err, topic=topic, "failed while processing rss event");
                         continue;
                     };
                 }
                 Err(err) => {
-                    tracing::error!("failed to fetch rss channel: {err:#?}");
-                    continue;
+                    tracing::error!(err=?err, "failed to fetch rss channel");
+                    return Err(err.into());
                 }
             }
         }
@@ -114,20 +114,23 @@ where
 
     pub async fn processing_event(&self, channel: rss::Channel) -> Result<(), anyhow::Error> {
         let topic = channel.title();
-        tracing::info!("{topic}: received new content from {topic}");
+        tracing::info!("{topic}: received new content");
 
         for item in channel.items() {
             let response = match self.extract_item(item).await {
                 Ok(it) => it,
                 Err(err) => {
-                    tracing::error!("{topic}: failed while converting rss item: {err:#?}");
+                    tracing::error!(err=?err, "{topic}: failed while converting rss item");
                     continue;
                 }
             };
 
             let art_id = response.guid();
             if self.cacher().contains(art_id).await {
-                tracing::warn!("news article {art_id} has been already parsed");
+                tracing::warn!(
+                    article = art_id,
+                    "{topic}: news article has been already parsed"
+                );
                 continue;
             }
 
@@ -135,11 +138,14 @@ where
             let art_id = art.id();
             let publish = self.publisher();
             if let Err(err) = publish.publish(&art).await {
-                tracing::error!("{topic}: failed to send news article {art_id}: {err:#?}");
+                tracing::error!(err=?err, article=art_id, "{topic}: failed to send article");
                 continue;
             }
 
-            tracing::info!("{topic}: article {art_id} published successful");
+            tracing::info!(
+                article = art_id,
+                "{topic}: article has been published successful"
+            );
             self.cacher.set(art_id, &art).await;
         }
 
@@ -174,7 +180,13 @@ where
 
         let pub_date = item
             .pub_date()
-            .map(|it| NaiveDateTime::from_str(it).unwrap_or_default())
+            .map(|it| match NaiveDateTime::from_str(it) {
+                Ok(time) => time,
+                Err(err) => {
+                    tracing::error!(err=?err, time=it, "failed to extract datetime");
+                    Utc::now().naive_utc()
+                }
+            })
             .unwrap_or_default();
 
         let photo_path = match item.itunes_ext() {
