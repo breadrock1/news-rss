@@ -11,7 +11,7 @@ use crate::feeds::FetchTopic;
 use crate::publish::models::PublishNews;
 use crate::publish::Publisher;
 
-use chrono::NaiveDateTime;
+use chrono::{NaiveDateTime, Utc};
 use getset::{CopyGetters, Getters};
 use regex::Regex;
 use reqwest::Url;
@@ -174,7 +174,13 @@ where
 
         let pub_date = item
             .pub_date()
-            .map(|it| NaiveDateTime::from_str(it).unwrap_or_default())
+            .map(|it| match NaiveDateTime::from_str(it) {
+                Ok(time) => time,
+                Err(err) => {
+                    tracing::error!(err=?err, time=it, "failed to extract datetime");
+                    Utc::now().naive_utc()
+                }
+            })
             .unwrap_or_default();
 
         let photo_path = match item.itunes_ext() {
