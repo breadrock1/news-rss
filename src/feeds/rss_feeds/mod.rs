@@ -11,7 +11,7 @@ use crate::feeds::FetchTopic;
 use crate::publish::models::PublishNews;
 use crate::publish::Publisher;
 
-use chrono::{NaiveDateTime, Utc};
+use chrono::Utc;
 use getset::{CopyGetters, Getters};
 use regex::Regex;
 use reqwest::Url;
@@ -180,10 +180,10 @@ where
 
         let pub_date = item
             .pub_date()
-            .map(|it| match NaiveDateTime::from_str(it) {
-                Ok(time) => time,
+            .map(|it| match dateparser::DateTimeUtc::from_str(it) {
+                Ok(time) => time.0.naive_utc(),
                 Err(err) => {
-                    tracing::error!(err=?err, time=it, "failed to extract datetime");
+                    tracing::warn!(err=?err, time=it, "failed to extract datetime");
                     Utc::now().naive_utc()
                 }
             })
