@@ -182,7 +182,7 @@ where
 
     let worker_name = form.target_url();
     if let Some(worker) = workers_guard.get(worker_name) {
-        tracing::info!("worker {worker_name} already exists");
+        tracing::info!(worker=worker_name, "worker already exists");
         if !worker.worker().is_finished() && !form.create_force() {
             let msg = format!("worker {worker_name} already launched");
             return Err(ServerError::Launched(msg));

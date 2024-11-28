@@ -40,13 +40,13 @@ impl CacheService for RedisClient {
         let cxt = self.client.write().await;
         match cxt.get_multiplexed_tokio_connection().await {
             Err(err) => {
-                tracing::warn!("cache: failed to get redis connection {err:#?}");
+                tracing::warn!(err=?err, "cache: failed to get redis connection");
                 return;
             }
             Ok(mut conn) => {
                 let store_result: RedisResult<()> = conn.set_ex(key, value, expired_secs).await;
                 if let Err(err) = store_result {
-                    tracing::warn!("cache: failed to store value to redis: {err:#?}");
+                    tracing::warn!(err=?err, "cache: failed to store value to redis");
                     return;
                 }
             }
@@ -58,7 +58,7 @@ impl CacheService for RedisClient {
         match cxt.get_multiplexed_tokio_connection().await {
             Ok(mut conn) => conn.get::<&str, PublishNews>(key).await.ok().is_some(),
             Err(err) => {
-                tracing::warn!("failed to get redis service connection {err:#?}");
+                tracing::warn!(err=?err, "failed to get redis service connection");
                 false
             }
         }
