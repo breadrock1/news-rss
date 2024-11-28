@@ -33,7 +33,7 @@ with following pre-processing steps:
 1. Clone the repository:
 
     ```shell
-    git clone https://github.com/breadrock1/news-rss.git
+    git clone http://<gitlab-domain-address>/data-lake/news-rss.git
     cd news-rss
     ```
 

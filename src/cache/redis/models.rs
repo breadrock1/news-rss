@@ -13,7 +13,7 @@ impl redis::ToRedisArgs for PublishNews {
         match serde_json::to_string(self) {
             Ok(json_str) => out.write_arg_fmt(json_str),
             Err(err) => {
-                tracing::error!("cacher: failed to serialize search parameters: {err:#?}");
+                tracing::error!(err=?err, "cacher: failed to serialize search parameters");
             }
         }
     }
@@ -26,7 +26,7 @@ impl redis::FromRedisValue for PublishNews {
                 serde_json::from_slice::<PublishNews>(data.as_slice()).map_err(RedisError::from)
             }
             _ => {
-                let err = serde_json::Error::custom("failed to extract redis value type");
+                let err = serde_json::Error::custom("failed to extract redis value");
                 Err(RedisError::from(err))
             }
         }

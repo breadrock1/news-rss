@@ -30,10 +30,10 @@ password = "postgres"
 max_pool_size = 10
 
 [storage.pgsql]
-address = "localhost:5432"
-database = "ai-crawler"
-username = "postgres"
-password = "postgres"
+address = "postgres:5432"
+database = "agregator"
+username = "agregator"
+password = "agregator_password"
 max_pool_size = 10
 
 [crawler.llm]
