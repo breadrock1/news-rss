@@ -84,8 +84,8 @@ where
                     };
                 }
                 Err(err) => {
-                    tracing::error!("failed to fetch rss channel: {err:#?}");
-                    continue;
+                    tracing::error!(err=?err, "failed to fetch rss channel");
+                    return Err(err.into());
                 }
             }
         }
