@@ -91,12 +91,12 @@ pub async fn rabbit_consumer(queue: &str, config: &RabbitConfig) -> Result<(), a
     consumer.set_delegate(move |delivery: DeliveryResult| async move {
         let delivery = match delivery {
             Ok(Some(delivery)) => {
-                tracing::info!("delivered {delivery:?}");
+                tracing::info!(delivery=?delivery, "msg has been delivered");
                 delivery
             }
             Ok(None) => return,
             Err(err) => {
-                tracing::error!("failed to consume queue message {err:#?}");
+                tracing::error!(err=?err, "failed to consume queue msg");
                 return;
             }
         };
