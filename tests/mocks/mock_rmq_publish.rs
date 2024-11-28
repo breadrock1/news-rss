@@ -23,7 +23,7 @@ impl Publisher for MockRabbitPublisher {
 
     async fn publish(&self, msg_body: &PublishNews) -> Result<(), Self::Error> {
         let id = msg_body.id();
-        tracing::info!(article=id, "rabbit confirm msg successful");
+        tracing::info!(article = id, "rabbit confirm msg successful");
         Ok(())
     }
 }

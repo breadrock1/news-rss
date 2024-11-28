@@ -128,7 +128,7 @@ where
             let art_id = response.guid();
             if self.cacher().contains(art_id).await {
                 tracing::warn!(
-                    article=art_id,
+                    article = art_id,
                     "{topic}: news article has been already parsed"
                 );
                 continue;
@@ -143,7 +143,7 @@ where
             }
 
             tracing::info!(
-                article=art_id,
+                article = art_id,
                 "{topic}: article has been published successful"
             );
             self.cacher.set(art_id, &art).await;

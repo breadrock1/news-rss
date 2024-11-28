@@ -29,7 +29,7 @@ impl ServiceConnect for PgsqlTopicStorage {
         let address = config.address();
 
         let url = format!("postgresql://{user}:{passwd}@{address}/{db}");
-        tracing::info!(url=url, "connecting to database");
+        tracing::info!(url = url, "connecting to database");
         let connection = PgPoolOptions::default()
             .max_connections(config.max_pool_size())
             .connect(&url)

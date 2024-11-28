@@ -30,7 +30,7 @@ impl ServiceConnect for PgsqlPublisher {
         let address = config.address();
 
         let url = format!("postgresql://{user}:{passwd}@{address}/{db}");
-        tracing::info!(db_url=url, "connecting to database");
+        tracing::info!(db_url = url, "connecting to database");
         let connection = PgPoolOptions::default()
             .max_connections(config.max_pool_size())
             .connect(&url)

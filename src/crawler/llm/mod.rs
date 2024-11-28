@@ -85,7 +85,7 @@ impl CrawlerService for LlmCrawler {
         let html_str = response.text().await?;
         let html_str = match html_editor::parse(&html_str) {
             Err(err) => {
-                tracing::error!(err=err, "failed to parse html");
+                tracing::error!(err = err, "failed to parse html");
                 html_str
             }
             Ok(mut dom) => dom
