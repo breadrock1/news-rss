@@ -15,6 +15,7 @@ test-publish-rabbit = []
 anyhow = "^1.0"
 async-trait = "^0.1"
 config = "^0.14"
+dateparser = "^0.2"
 derive_builder = "^0.20"
 getset = "^0.1"
 lapin = "^2.5"
