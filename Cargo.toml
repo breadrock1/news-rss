@@ -11,6 +11,11 @@ default = []
 
 test-publish-rabbit = []
 
+[profile.release]
+lto = true
+panic = "abort"
+strip = "debuginfo"
+
 [dependencies]
 anyhow = "^1.0"
 async-trait = "^0.1"
