@@ -114,13 +114,13 @@ where
 
     pub async fn processing_event(&self, channel: rss::Channel) -> Result<(), anyhow::Error> {
         let topic = channel.title();
-        tracing::info!("{topic}: received new content");
+        tracing::info!(topic=topic, "received new rss content");
 
         for item in channel.items() {
             let response = match self.extract_item(item).await {
                 Ok(it) => it,
                 Err(err) => {
-                    tracing::error!(err=?err, "{topic}: failed while converting rss item");
+                    tracing::error!(topic=topic, err=?err, "failed while converting rss item");
                     continue;
                 }
             };
@@ -128,8 +128,9 @@ where
             let art_id = response.guid();
             if self.cacher().contains(art_id).await {
                 tracing::warn!(
+                    topic=topic,
                     article = art_id,
-                    "{topic}: news article has been already parsed"
+                    "news article has been already parsed"
                 );
                 continue;
             }
@@ -138,13 +139,14 @@ where
             let art_id = art.id();
             let publish = self.publisher();
             if let Err(err) = publish.publish(&art).await {
-                tracing::error!(err=?err, article=art_id, "{topic}: failed to send article");
+                tracing::error!(topic=topic, article=art_id, err=?err, "failed to send article");
                 continue;
             }
 
             tracing::info!(
+                topic=topic,
                 article = art_id,
-                "{topic}: article has been published successful"
+                "article has been published successful"
             );
             self.cacher.set(art_id, &art).await;
         }
@@ -183,7 +185,7 @@ where
             .map(|it| match dateparser::DateTimeUtc::from_str(it) {
                 Ok(time) => time.0.naive_utc(),
                 Err(err) => {
-                    tracing::warn!(err=?err, time=it, "failed to extract datetime");
+                    tracing::warn!(time=it, err=?err, "failed to extract datetime");
                     Utc::now().naive_utc()
                 }
             })

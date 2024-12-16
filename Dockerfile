@@ -37,6 +37,7 @@ RUN apt update && apt install -y curl
 
 WORKDIR /app
 
+COPY ./config /app/config
 COPY --from=builder /app/target/release/news-rss .
 
 ENTRYPOINT ["/app/news-rss"]
