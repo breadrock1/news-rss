@@ -42,7 +42,7 @@ jobs:
     runs-on: ${{ matrix.platform.runs-on }}
     needs: create-release
     permissions:
-      contents: write-all
+      contents: write
     strategy:
       matrix:
         platform:
