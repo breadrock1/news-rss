@@ -114,7 +114,7 @@ where
 
     pub async fn processing_event(&self, channel: rss::Channel) -> Result<(), anyhow::Error> {
         let topic = channel.title();
-        tracing::info!(topic=topic, "received new rss content");
+        tracing::info!(topic = topic, "received new rss content");
 
         for item in channel.items() {
             let response = match self.extract_item(item).await {
@@ -128,7 +128,7 @@ where
             let art_id = response.guid();
             if self.cacher().contains(art_id).await {
                 tracing::warn!(
-                    topic=topic,
+                    topic = topic,
                     article = art_id,
                     "news article has been already parsed"
                 );
@@ -144,7 +144,7 @@ where
             }
 
             tracing::info!(
-                topic=topic,
+                topic = topic,
                 article = art_id,
                 "article has been published successful"
             );
