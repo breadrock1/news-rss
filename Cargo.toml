@@ -1,6 +1,6 @@
 [package]
 name = "news-rss"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 
 [features]
@@ -10,6 +10,11 @@ crawler-llm = ["dep:openai_dive", "dep:html2text", "dep:html_editor"]
 default = []
 
 test-publish-rabbit = []
+
+[profile.release]
+lto = true
+panic = "abort"
+strip = "debuginfo"
 
 [dependencies]
 anyhow = "^1.0"

@@ -1,4 +1,7 @@
 # News-RSS Project
+[![Create release](https://github.com/breadrock1/news-rss/actions/workflows/release.yml/badge.svg)](https://github.com/breadrock1/news-rss/actions/workflows/release.yml)
+[![Pipelines](https://img.shields.io/github/actions/workflow/status/breadrock1/news-rss/pull-request.yml?branch=master)](https://img.shields.io/github/actions/workflow/status/breadrock1/news-rss/pull-request.yml?branch=master)
+[![Last release: ](https://img.shields.io/github/v/release/breadrock1/news-rss?display_name=release)](https://img.shields.io/github/v/release/breadrock1/news-rss?display_name=release)
 
 ## Overview
 

@@ -31,12 +31,13 @@ RUN cargo install ${FEATURES} --bins --path .
 
 
 # Target layer based on tiny official ubuntu image with neccessary binaries and data to run.
-FROM ubuntu:rolling
+FROM debian:bookworm-slim
 
 RUN apt update && apt install -y curl
 
 WORKDIR /app
 
+COPY ./config /app/config
 COPY --from=builder /app/target/release/news-rss .
 
 ENTRYPOINT ["/app/news-rss"]

@@ -2,7 +2,10 @@
 .run
 .vscode
 
+.env
+.DS_Store
+
 /rabbitmq-data
-/redis-data
+/redis-dataru
 
 /target
